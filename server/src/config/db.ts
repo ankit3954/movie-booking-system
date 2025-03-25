@@ -1,7 +1,7 @@
-import mysql from "mysql2";
+import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load environment variables
+dotenv.config();
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -9,10 +9,9 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: Number(process.env.DB_PORT),
-  connectionLimit: 10, // Maximum number of connections
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-// Promisify for async/await
-const db = pool.promise();
-
-export default db;
+export default pool;
