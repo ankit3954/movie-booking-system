@@ -1,5 +1,6 @@
-import mysql from "mysql2/promise";
+import mysql, { Pool, PoolConnection, QueryError } from 'mysql2';
 import dotenv from "dotenv";
+
 
 dotenv.config();
 
@@ -14,4 +15,29 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-export default pool;
+
+function executeQuery(query: string, values: any[]): Promise<any> {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err: Error | null, connection: PoolConnection) => {
+      if (err) {
+        console.error("Error getting connection from pool:", err);
+        return reject(err);
+      }
+
+      connection.query(query, values, (queryErr: Error | null, result: any) => {
+        connection.release(); // Ensure connection is released
+
+        if (queryErr) {
+          console.error("Error executing query:", queryErr);
+          return reject(queryErr);
+        }
+
+        resolve(result);
+      });
+    });
+  });
+}
+
+
+
+export default executeQuery;
