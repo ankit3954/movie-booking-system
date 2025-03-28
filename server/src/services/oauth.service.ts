@@ -23,7 +23,6 @@ export const authenticateOAuthUser = async (
 ): Promise<{ token: string }> => {
   try {
     const results = await findOAuthUser(provider, providerUserId);
-    console.log(results)
     if (results.length > 0) {
       const user: User = results[0];
       const token = jwt.sign({ id: user.id, username: displayName }, secretKey, { expiresIn: '1h' });

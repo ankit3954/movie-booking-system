@@ -5,11 +5,16 @@ import { globalErrorHandler } from "./middleware/errorMiddleware";
 import { sendResponse } from "./utils/responseHandler";
 import executeQuery from "./config/db";
 
+
+const authRouter = require("./routes/auth.router")
+
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/auth', authRouter)
 
 // app.get("/ping", async (req, res, next) => {
 //   try {
