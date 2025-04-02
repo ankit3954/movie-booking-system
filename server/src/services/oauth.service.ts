@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import {findOAuthUser, createOAuthUser} from '../models/oauth.model';
 import {createUser} from '../models/user.model';
+import executeQuery from '../config/db';
 // import { User } from '../models/User';
 
 export interface User {
@@ -22,17 +23,19 @@ export const authenticateOAuthUser = async (
   email: string
 ): Promise<{ token: string }> => {
   try {
-    const results = await findOAuthUser(provider, providerUserId);
-    if (results.length > 0) {
-      const user: User = results[0];
+    const existingOAuthUsers = await findOAuthUser(provider, providerUserId);
+    if (existingOAuthUsers.length > 0) {
+      const user: User = existingOAuthUsers[0];
       const token = jwt.sign({ id: user.id, username: displayName }, secretKey, { expiresIn: '1h' });
       return { token };
     }
 
-    const result = await createUser(displayName, email, null);
-    await createOAuthUser(result.insertId, provider, providerUserId);
+    const newOAuthUser = await createUser(displayName, email, null);
+    const extractedUserId = await executeQuery("SELECT id FROM users where email  = ?", [email])
+    // console.log("Result ------>", extractedUserId)
+    await createOAuthUser(extractedUserId[0].id, provider, providerUserId);
 
-    const token = jwt.sign({ id: result.insertId, username: displayName }, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({ id: extractedUserId[0].id, username: displayName }, secretKey, { expiresIn: '1h' });
     return { token };
   } catch (error) {
     throw new Error(error as string);

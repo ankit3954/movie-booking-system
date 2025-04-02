@@ -54,7 +54,7 @@ export const loginController = async (
 
     const result = await executeQuery(_extractPassword(), [email]);
     
-    console.log(result)
+    // console.log(result)
     if(result.length === 0){
         sendResponse(res, 404, result, "User not found")
     }
