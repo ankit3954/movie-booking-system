@@ -37,7 +37,7 @@ export const registerController = async (
       encryptedPassword,
     ]);
 
-    sendResponse(res, 200, result, 'User is registered')
+    sendResponse(true, res, 200, result, 'User is registered')
 
   } catch (error) {
     next(error);
@@ -50,13 +50,15 @@ export const loginController = async (
   next: NextFunction
 ) => {
   try {
+    console.log(req.body)
     const { password, email } = req.body;
 
     const result = await executeQuery(_extractPassword(), [email]);
     
-    // console.log(result)
+    console.log(result)
     if(result.length === 0){
-        sendResponse(res, 404, result, "User not found")
+        sendResponse(false, res, 200, result, "User not found")
+        return
     }
 
     const storedPasssword = result[0].password;
@@ -64,11 +66,12 @@ export const loginController = async (
 
     if(isPasswordCorrect){
         const token = await generateToken(email);
-        sendResponse(res, 200, token, "User Logged In Successfully")
+        sendResponse(true, res, 200, token, "User Logged In Successfully")
     }
 
-    
-  } catch (error) {}
+  } catch (error) {
+    next(error)
+  }
 };
 
 

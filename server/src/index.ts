@@ -36,7 +36,7 @@ app.use('/oauth', oauthRouter)
 app.get("/ping", async (req, res, next) => {
   try {
     const result = await executeQuery("SELECT 1+1 AS result", [] )
-    sendResponse(res, 200, result)
+    sendResponse(true, res, 200, result)
   } catch (error) {
     next(new AppError("DB Connection Failed", 500))
   }

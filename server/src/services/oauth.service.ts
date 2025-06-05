@@ -21,13 +21,13 @@ export const authenticateOAuthUser = async (
   providerUserId: string,
   displayName: string,
   email: string
-): Promise<{ token: string }> => {
+): Promise<string> => {
   try {
     const existingOAuthUsers = await findOAuthUser(provider, providerUserId);
     if (existingOAuthUsers.length > 0) {
       const user: User = existingOAuthUsers[0];
       const token = jwt.sign({ id: user.id, username: displayName }, secretKey, { expiresIn: '1h' });
-      return { token };
+      return token;
     }
 
     const newOAuthUser = await createUser(displayName, email, null);
@@ -36,7 +36,7 @@ export const authenticateOAuthUser = async (
     await createOAuthUser(extractedUserId[0].id, provider, providerUserId);
 
     const token = jwt.sign({ id: extractedUserId[0].id, username: displayName }, secretKey, { expiresIn: '1h' });
-    return { token };
+    return token;
   } catch (error) {
     throw new Error(error as string);
   }
