@@ -12,7 +12,7 @@ type User = {
   password: string;
 };
 
-type LoginResponse = {
+type LoginAndRegisterResponse = {
   success: boolean;
   statusCode: number;
   message: string;
@@ -38,7 +38,7 @@ export const useAuth = () => {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
-      const result = await post<LoginResponse>(
+      const result = await post<LoginAndRegisterResponse>(
         "http://localhost:5000/auth/login",
         { email, password }
       );
@@ -68,17 +68,35 @@ export const useAuth = () => {
     email: string,
     password: string
   ) => {
-    setLoading(true);
-    const { user } = await post<{ user: User }>("/auth/register", {
-      username,
-      email,
-      password,
-    });
-    // setToken(token)
-    // storeToken(token)
-    setUser(user);
-    setLoading(false);
-    navigate("/login");
+
+    try {
+      setLoading(true);
+      const result = await post<LoginAndRegisterResponse>(
+        "http://localhost:5000/auth/register",
+        { username, email, password }
+      );
+
+      const data = result.data
+
+      if (result.success && data) {
+        setUser(user);
+        setLoading(false);
+        alert("Successfully Registered")
+        navigate("/login");
+        return true
+      } else {
+        alert("Register failed: " + result.message);
+        return false;
+      }
+
+    } catch (error) {
+      console.log("Register error:", error);
+      alert("Something went wrong. Please try again.");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+
   };
 
   const logout = () => {
