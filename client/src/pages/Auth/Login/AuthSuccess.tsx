@@ -18,7 +18,7 @@ const AuthSuccess = () => {
         }
 
         localStorage.setItem("authToken", token);
-        navigate("/dashboard");
+        navigate("/");
     }, [navigate]);
 
     return <p>Logging in...</p>;

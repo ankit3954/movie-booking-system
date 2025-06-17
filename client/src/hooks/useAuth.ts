@@ -48,7 +48,7 @@ export const useAuth = () => {
         setToken(token);
         storeToken(token);
         setUser({ email, password }); // Ideally this comes from backend
-        navigate("/dashboard");
+        navigate("/");
         return true;
       } else {
         alert("Login failed: " + result.message);

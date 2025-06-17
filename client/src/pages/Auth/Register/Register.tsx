@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent, JSX, useEffect } from "react";
+import React, { useState, ChangeEvent, FormEvent, JSX} from "react";
 import {
     Box,
     Container,
@@ -6,17 +6,13 @@ import {
     TextField,
     Button,
     Typography,
-    Divider,
     Link,
     Alert,
     IconButton,
-    InputAdornment,
-    Checkbox,
-    FormControlLabel,
+    InputAdornment
 } from "@mui/material";
-import { Visibility, VisibilityOff, Google, Movie } from "@mui/icons-material";
+import { Visibility, VisibilityOff, Movie } from "@mui/icons-material";
 import { useAuth } from "../../../hooks/useAuth";
-import { removeToken } from "../../../utils/helpers/storage";
 
 interface RegisterForm {
     username: string,
@@ -33,11 +29,6 @@ const Register = (): JSX.Element => {
     });
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
-
-    // // whenever user goes back to login page by pushng back button instead of logout token is removed
-    // useEffect(() => {
-    //     removeToken()
-    // }, [])
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
         const { name, value, checked, type } = e.target;
