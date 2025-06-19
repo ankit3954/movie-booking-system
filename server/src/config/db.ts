@@ -17,7 +17,7 @@ const pool = mysql.createPool({
 
 
 function executeQuery(query: string, values: any[]): Promise<any> {
-  console.log(query)
+ 
   return new Promise((resolve, reject) => {
     pool.getConnection((err: Error | null, connection: PoolConnection) => {
       if (err) {
@@ -26,6 +26,7 @@ function executeQuery(query: string, values: any[]): Promise<any> {
       }
 
       connection.query(query, values, (queryErr: Error | null, result: any) => {
+         console.log(query)
         connection.release(); // Ensure connection is released
 
         if (queryErr) {
