@@ -26,7 +26,7 @@ function executeQuery(query: string, values: any[]): Promise<any> {
       }
 
       connection.query(query, values, (queryErr: Error | null, result: any) => {
-         console.log(query)
+        //  console.log(query)
         connection.release(); // Ensure connection is released
 
         if (queryErr) {

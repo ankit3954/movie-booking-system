@@ -53,7 +53,6 @@ export const getMovies = async (
 ) => {
     try {
         const { location, theaterId } = req.query;
-        console.log(location, theaterId)
         const values = [location, location, theaterId, theaterId];
         const moviesList = await executeQuery(_getMovies(), values);
         sendResponse(true, res, 200, moviesList, "Movies Successfully Fetched")
@@ -115,4 +114,4 @@ export const getMovieByID = async (
 }
 
 
-module.exports = { getMovies, getMovieByID }
+module.exports = { getMovies, getMovieByID, getTheatreLocations, getTheatres }
