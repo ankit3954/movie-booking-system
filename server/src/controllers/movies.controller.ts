@@ -3,26 +3,52 @@ import executeQuery from "../config/db";
 import { sendResponse } from "../utils/responseHandler";
 
 
+// const _getMovies = () => `
+//     SELECT 
+//       m.id AS movie_id,
+//       m.title,
+//       m.description,
+//       m.duration_minutes,
+//       m.genre,
+//       m.language,
+//       m.release_date,
+//       m.poster_url,
+//       t.name AS theater_name,
+//       t.location,
+//       ms.show_time,
+//       ms.start_time,
+//       ms.end_time
+//     FROM movies m
+//     JOIN movie_schedules ms ON m.id = ms.movie_id
+//     JOIN theaters t ON t.id = ms.theater_id
+//     WHERE 
+//       (? IS NULL OR t.location = ?)
+//       AND (? IS NULL OR t.id = ?)
+// `;
+
+
 const _getMovies = () => `
-    SELECT 
-      m.id AS movie_id,
-      m.title,
-      m.description,
-      m.duration_minutes,
-      m.genre,
-      m.language,
-      m.release_date,
-      t.name AS theater_name,
-      t.location,
-      ms.show_time,
-      ms.start_time,
-      ms.end_time
-    FROM movies m
-    JOIN movie_schedules ms ON m.id = ms.movie_id
-    JOIN theaters t ON t.id = ms.theater_id
-    WHERE 
-      (? IS NULL OR t.location = ?)
-      AND (? IS NULL OR t.id = ?)
+  SELECT 
+    m.id AS movie_id,
+    m.title,
+    m.description,
+    m.duration_minutes,
+    m.genre,
+    m.language,
+    m.release_date,
+    m.poster_url,
+    GROUP_CONCAT(DISTINCT t.name) AS theater_names,
+    GROUP_CONCAT(DISTINCT t.location) AS theater_locations,
+    GROUP_CONCAT(DISTINCT ms.show_time ORDER BY ms.show_time) AS show_times,
+    MIN(ms.start_time) AS first_start_time,
+    MAX(ms.end_time) AS last_end_time
+  FROM movies m
+  JOIN movie_schedules ms ON m.id = ms.movie_id
+  JOIN theaters t ON t.id = ms.theater_id
+  WHERE 
+    (? IS NULL OR LOWER(t.location) = LOWER(?))
+    AND (? IS NULL OR t.id = ?)
+  GROUP BY m.id
 `;
 
 const _getMovieByID = () => `SELECT * FROM movies where id = ?`
@@ -52,10 +78,18 @@ export const getMovies = async (
     next: NextFunction
 ) => {
     try {
-        const { location, theaterId } = req.query;
+        const { theaterId } = req.query;
+        const location = req.query.location?.toString().toLowerCase() ?? null;
         const values = [location, location, theaterId, theaterId];
         const moviesList = await executeQuery(_getMovies(), values);
-        sendResponse(true, res, 200, moviesList, "Movies Successfully Fetched")
+
+        const formatted = moviesList.map((movie: { show_times: string; theater_names: string; theater_locations: string; }) => ({
+            ...movie,
+            show_times: movie.show_times?.split(',') ?? [],
+            theater_names: movie.theater_names?.split(',') ?? [],
+            theater_locations: movie.theater_locations?.split(',') ?? [],
+        }));
+        sendResponse(true, res, 200, formatted, "Movies Successfully Fetched")
     } catch (error) {
         next(error)
     }
