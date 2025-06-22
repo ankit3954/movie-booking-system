@@ -34,3 +34,9 @@ export type FilterSectionProps = {
   handleTheaterChange: (event: SelectChangeEvent) => void;
   handleResetFilters?: () => void;
 };
+
+export type AppData = {
+  locations: Location[];
+  theaters: Theater[];
+  movies: Movie[];
+};

@@ -25,6 +25,9 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   return (
     <Box
       sx={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
         display: 'flex',
         flexWrap: 'wrap',
         gap: 2,
@@ -34,7 +37,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         backgroundColor: '#f5f5f5',
         borderRadius: 2,
         boxShadow: 1,
-        mt: 2,
+        // mt: 2,
       }}
     >
       <Typography variant="h6" sx={{ flexBasis: '100%' }}>

@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import MoviesList from '../Movies/MoviesList/MoviesList'
 import { useApi } from '../../hooks/useApi';
-import { Movie } from "../../types/movie.type"
+import { AppData, Location, Movie, Theater } from "../../types/movie.type"
 import { SelectChangeEvent } from '@mui/material';
 import FilterSection from '../Movies/MoviesList/FilterSection';
 
+
 const Home = () => {
 
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [data, setData] = useState<AppData>({
+    locations: [],
+    theaters: [],
+    movies: [],
+  });
   const [currentLocation, setCurrentLocation] = useState('');
   const [currentTheater, setCurrentTheater] = useState('');
-  const [locations, setLocations] = useState([]);
-  const [theaters, setTheaters] = useState([]);
 
   const { get } = useApi()
 
-
   const handleLocationChange = (event: SelectChangeEvent) => {
     setCurrentLocation(event.target.value);
-    // optionally fetch/update theater options here
   };
 
   const handleTheaterChange = (event: SelectChangeEvent) => {
@@ -32,23 +33,19 @@ const Home = () => {
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      const locRes = await get<any>(
-        "http://localhost:5000/movies/getTheatreLocations"
-      )
+      const [locRes, theRes, movRes] = await Promise.all([
+        get<any>('http://localhost:5000/movies/getTheatreLocations'),
+        get<any>('http://localhost:5000/movies/getTheatres'),
+        get<any>('http://localhost:5000/movies/get'),
+      ]);
 
-      setLocations(locRes.data);
+      setData({
+        locations: locRes.data,
+        theaters: theRes.data,
+        movies: movRes.data,
+      });
 
-      const theRes = await get<any>(
-        "http://localhost:5000/movies/getTheatres"
-      )
-      setTheaters(theRes.data);
-
-      const movRes = await get<any>(
-        "http://localhost:5000/movies/get"
-      )
-      setMovies(movRes.data);
-
-      console.log(movRes, locRes, theRes)
+      // console.log(movRes, locRes, theRes)
     };
 
     fetchInitialData();
@@ -58,11 +55,14 @@ const Home = () => {
   useEffect(() => {
     const fetchTheaters = async () => {
       const res = await get<any>(`http://localhost:5000/movies/getTheatres?location=${currentLocation}`);
-      setTheaters(res.data);
+      setData((prevData) => ({
+        ...prevData,
+        theaters: res.data
+      }));
       setCurrentTheater(''); // reset selected theater
     };
 
-    if (currentLocation) fetchTheaters();
+    fetchTheaters();
   }, [currentLocation]);
 
 
@@ -73,27 +73,31 @@ const Home = () => {
       if (currentTheater) params.append('theaterId', currentTheater);
 
       const res = await get<any>(`http://localhost:5000/movies/get?${params.toString()}`);
-      setMovies(res.data);
+      setData((prevData) => ({
+        ...prevData,
+        movies: res.data
+      }));
     };
 
     fetchMovies();
   }, [currentLocation, currentTheater]);
 
-
+console.log("HI")
   return (
-    <div>
+    <>
       <FilterSection
-        locations={locations}
-        theaters={theaters}
+        locations={data.locations}
+        theaters={data.theaters}
         currentLocation={currentLocation}
         currentTheater={currentTheater}
         handleLocationChange={handleLocationChange}
         handleTheaterChange={handleTheaterChange}
         handleResetFilters={handleResetFilters}
       />
-      <MoviesList movies={movies} />
-    </div>
+      <MoviesList movies={data.movies} />
+    </>
   )
 }
 
 export default Home
+
