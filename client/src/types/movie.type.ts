@@ -40,3 +40,14 @@ export type AppData = {
   theaters: Theater[];
   movies: Movie[];
 };
+
+
+export type MovieDetail = {
+    posterUrl: string;
+    title: string;
+    durationMinutes: string;
+    description: string;
+    language: string;
+    genre: string;
+    releaseDate: string;
+};

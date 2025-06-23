@@ -5,11 +5,14 @@ type MovieCardProps = {
   title: string;
   description: string;
   posterUrl: string;
+  // movieId: string;
+  // handleClick: (movieId: string) => void;
+  handleClick: () => void;
 };
 
-const MovieCard: React.FC<MovieCardProps> = ({ title, description, posterUrl }) => {
+const MovieCard: React.FC<MovieCardProps> = ({ title, description, posterUrl, handleClick }) => {
   return (
-    <Card sx={{ width: 250, height: 400, display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
+    <Card onClick={handleClick} sx={{ width: 250, height: 400, display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
       <CardMedia
         component="img"
         image={'https://upload.wikimedia.org/wikipedia/en/thumb/9/90/Thunderbolts%2A_poster.jpg/250px-Thunderbolts%2A_poster.jpg'}

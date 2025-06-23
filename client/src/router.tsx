@@ -4,6 +4,7 @@ import Login from "./pages/Auth/Login/Login"
 import AuthSuccess from "./pages/Auth/Login/AuthSuccess"
 import Register from "./pages/Auth/Register/Register"
 import Home from "./pages/Home/Home"
+import MovieBooking from "./pages/Movies/MovieBooking/MovieBooking"
 
 export const router = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
             {
                 path: '/auth/success',
                 element: <AuthSuccess />
+            },
+            {
+                path: '/movie/booking/:movieId',
+                element: <MovieBooking />
             }
         ]
     }

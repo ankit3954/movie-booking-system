@@ -51,7 +51,33 @@ const _getMovies = () => `
   GROUP BY m.id
 `;
 
-const _getMovieByID = () => `SELECT * FROM movies where id = ?`
+const _getMovieByID = () => `
+ select
+	m.id as movieId,
+	m.title,
+	m.description,
+	m.duration_minutes as durationMinutes,
+	m.genre,
+	m.language,
+	m.release_date as releaseDate,
+	m.poster_url as posterUrl,
+	JSON_ARRAYAGG(
+    JSON_OBJECT(
+      'showTime', ms.show_time,
+      'startTime', ms.start_time,
+      'theater', t.name
+    )
+  ) as schedules
+ from
+	movies m
+ join movie_schedules ms on
+	m.id = ms.movie_id
+ join theaters t on
+	t.id = ms.theater_id
+ where
+	m.id = ?
+ group by
+	m.id;`
 
 const _getTheatreLocations = () => `
     SELECT 
@@ -135,9 +161,9 @@ export const getMovieByID = async (
     next: NextFunction
 ) => {
     try {
-        const movieID = req.body.movieID;
-        console.log(movieID)
-        const movieDetails = await executeQuery(_getMovieByID(), [movieID])
+        const {movieId} = req.query;
+        // console.log(movieId)
+        const movieDetails = await executeQuery(_getMovieByID(), [movieId])
         if (!movieDetails) {
             sendResponse(true, res, 200, [], "No Movies Found")
         }

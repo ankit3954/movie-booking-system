@@ -50,12 +50,12 @@ export const loginController = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body)
+    // console.log(req.body)
     const { password, email } = req.body;
 
     const result = await executeQuery(_extractPassword(), [email]);
     
-    console.log(result)
+    // console.log(result)
     if(result.length === 0){
         sendResponse(false, res, 200, result, "User not found")
         return

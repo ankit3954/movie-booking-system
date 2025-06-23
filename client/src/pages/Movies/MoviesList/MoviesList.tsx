@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import Grid from "@mui/material/Grid"
-import { useApi } from '../../../hooks/useApi'
 import MovieCard from '../../../components/ui/MovieCard'
 import { Movie } from '../../../types/movie.type'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -12,6 +12,12 @@ type MoviesListProps = {
 };
 
 const MoviesList:React.FC<MoviesListProps> = ({movies}) => {
+
+  const navigate = useNavigate()
+  
+  const handleClick = (movieId: string) => {
+    navigate(`/movie/booking/${movieId}`)
+  }
 
   return (
     <Box sx={{ padding: 3}}>
@@ -26,6 +32,8 @@ const MoviesList:React.FC<MoviesListProps> = ({movies}) => {
               title={movie.title}
               description={movie.description}
               posterUrl={movie.poster_url}
+              // movieId={movie.movie_id}
+              handleClick = {() => handleClick(movie.movie_id)}
             />
           </Grid>
         ))}
