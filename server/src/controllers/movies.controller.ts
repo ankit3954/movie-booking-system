@@ -52,32 +52,35 @@ const _getMovies = () => `
 `;
 
 const _getMovieByID = () => `
- select
-	m.id as movieId,
-	m.title,
-	m.description,
-	m.duration_minutes as durationMinutes,
-	m.genre,
-	m.language,
-	m.release_date as releaseDate,
-	m.poster_url as posterUrl,
-	JSON_ARRAYAGG(
-    JSON_OBJECT(
-      'showTime', ms.show_time,
-      'startTime', ms.start_time,
-      'theater', t.name
+ SELECT
+  m.id AS movieId,
+  m.title,
+  m.description,
+  m.duration_minutes AS durationMinutes,
+  m.genre,
+  m.language,
+  m.release_date AS releaseDate,
+  m.poster_url AS posterUrl,
+  JSON_OBJECTAGG(
+    t.name,
+    (
+      SELECT JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'showTime', ms_inner.show_time,
+          'startTime', ms_inner.start_time
+        )
+      )
+      FROM movie_schedules ms_inner
+      WHERE ms_inner.movie_id = m.id AND ms_inner.theater_id = t.id
     )
-  ) as schedules
- from
-	movies m
- join movie_schedules ms on
-	m.id = ms.movie_id
- join theaters t on
-	t.id = ms.theater_id
- where
-	m.id = ?
- group by
-	m.id;`
+  ) AS schedules
+FROM movies m
+JOIN movie_schedules ms ON m.id = ms.movie_id
+JOIN theaters t ON t.id = ms.theater_id
+WHERE
+  m.id = ? AND (? IS NULL OR LOWER(t.location) = LOWER(?))
+GROUP BY m.id;
+`
 
 const _getTheatreLocations = () => `
     SELECT 
@@ -161,12 +164,14 @@ export const getMovieByID = async (
     next: NextFunction
 ) => {
     try {
-        const {movieId} = req.query;
+        const {movieId, location} = req.query;
         // console.log(movieId)
-        const movieDetails = await executeQuery(_getMovieByID(), [movieId])
+        const result = await executeQuery(_getMovieByID(), [movieId, location, location])
+        const movieDetails = result[0]
         if (!movieDetails) {
-            sendResponse(true, res, 200, [], "No Movies Found")
+            sendResponse(true, res, 200, {}, "No Movies Found")
         }
+        console.log(movieDetails)
         sendResponse(true, res, 200, movieDetails, "Movie Details fetched Successfully.")
     } catch (error) {
         next(error)

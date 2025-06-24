@@ -41,8 +41,17 @@ export type AppData = {
   movies: Movie[];
 };
 
+type ScheduleEntry = {
+  showTime: string;
+  startTime: string;
+};
+
+type Schedules = {
+  [theaterName: string]: ScheduleEntry[];
+};
 
 export type MovieDetail = {
+    movieId: string;
     posterUrl: string;
     title: string;
     durationMinutes: string;
@@ -50,4 +59,5 @@ export type MovieDetail = {
     language: string;
     genre: string;
     releaseDate: string;
+    schedules: Schedules
 };

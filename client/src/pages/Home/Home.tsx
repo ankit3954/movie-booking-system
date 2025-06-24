@@ -94,7 +94,7 @@ console.log("HI")
         handleTheaterChange={handleTheaterChange}
         handleResetFilters={handleResetFilters}
       />
-      <MoviesList movies={data.movies} />
+      <MoviesList movies={data.movies} currentLocation = {currentLocation}/>
     </>
   )
 }

@@ -9,14 +9,19 @@ import { useNavigate } from 'react-router-dom'
 
 type MoviesListProps = {
   movies: Movie[];
+  currentLocation: string;
 };
 
-const MoviesList:React.FC<MoviesListProps> = ({movies}) => {
+const MoviesList:React.FC<MoviesListProps> = ({movies, currentLocation}) => {
 
   const navigate = useNavigate()
   
   const handleClick = (movieId: string) => {
-    navigate(`/movie/booking/${movieId}`)
+    navigate(`/movie/booking/${movieId}`, {
+      state: {
+        location: currentLocation
+      }
+    })
   }
 
   return (
