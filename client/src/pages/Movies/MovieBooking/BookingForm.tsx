@@ -191,7 +191,12 @@ const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
     }
 
     const getAvailableTimeSlots = (selectedCinema: string, selectedDate: string) => {
-        
+        const entries = movieDetails.schedules[selectedCinema];
+        if (!entries) return [];
+
+        return entries
+            .filter(entry => entry.showTime === selectedDate)
+            .map(entry => entry.startTime);
     }
     // Update available dates when cinema changes
     useEffect(() => {
@@ -207,10 +212,13 @@ const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
 
 
     useEffect(() => {
-        if(selectedDate){
+        if (selectedDate) {
             const timeSlots = getAvailableTimeSlots(selectedCinema, selectedDate)
-        }else{
-
+            setAvailableTimeSlots(timeSlots)
+            setSelectedTimeSlot('')
+        } else {
+            setAvailableTimeSlots([])
+            setSelectedTimeSlot('')
         }
     }, [selectedDate])
 
@@ -263,7 +271,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
                                             onClick={() => setSelectedDate(date)}
                                             sx={{ minWidth: 100, flexGrow: 1 }}
                                         >
-                                     {date}
+                                            {date}
                                         </Button>
                                     );
                                 })
@@ -280,21 +288,21 @@ const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
 
                         {/* Date selection boxes */}
                         <Box display="flex" gap={2} flexWrap="wrap" mb={3}>
-                            {availableDates.length > 0 ? (
-                                availableDates.map((date) => {
-                                    const dateStr = date.toString();
+                            {availableTimeSlots.length > 0 ? (
+                                availableTimeSlots.map((timeSlot) => {
+                                    const timeSlotStr = timeSlot.toString();
                                     return (
                                         <Button
-                                            key={dateStr}
+                                            key={timeSlotStr}
                                             variant={
-                                                selectedDate?.toString() === dateStr
+                                                selectedTimeSlot?.toString() === timeSlotStr
                                                     ? 'contained'
                                                     : 'outlined'
                                             }
-                                            onClick={() => setSelectedDate(date)}
+                                            onClick={() => setSelectedTimeSlot(timeSlot)}
                                             sx={{ minWidth: 100, flexGrow: 1 }}
                                         >
-                                     {date}
+                                            {timeSlot}
                                         </Button>
                                     );
                                 })
