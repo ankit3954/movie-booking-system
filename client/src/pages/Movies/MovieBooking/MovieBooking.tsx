@@ -47,14 +47,31 @@ const MovieBooking = () => {
     return (
         <Box display="flex" height="100vh">
             {/* Left 30% - Movie Details */}
-            <Box flex="0 0 30%" p={2} borderRight="1px solid #ccc">
+            <Box
+                flex="0 0 30%"
+                p={2}
+                borderRight="1px solid #ccc"
+                overflow="hidden"
+                sx={{
+                    position: "sticky",
+                    top: 0,
+                    height: "100vh"
+                }}
+            >
                 <MovieDetails
                     movieDetails={movieDetails}
                 />
             </Box>
 
             {/* Right 70% - Booking Form */}
-            <Box flex="1" p={2}>
+            <Box
+                flex="1"
+                p={2}
+                sx={{
+                    overflowY: 'auto',
+                    height: '100vh',
+                }}
+            >
                 <BookingForm
                     movieDetails={movieDetails}
                 />

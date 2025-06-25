@@ -1,160 +1,4 @@
-// // import React from 'react'
-
-// // const BookingForm = () => {
-// //   return (
-// //     <div>BookingForm</div>
-// //   )
-// // }
-
-// // export default BookingForm
-
-// import React, { useState } from 'react';
-// import {
-//     Box,
-//     Typography,
-//     TextField,
-//     Select,
-//     MenuItem,
-//     FormControl,
-//     InputLabel,
-//     Button,
-//     ToggleButtonGroup,
-//     ToggleButton
-// } from '@mui/material';
-// import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-// import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-
-// const BookingForm = () => {
-//     const [step, setStep] = useState(1);
-
-//     // Step 1 fields
-//     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-//     const [selectedCinema, setSelectedCinema] = useState('');
-//     const [selectedLanguage, setSelectedLanguage] = useState('');
-//     const [selectedTime, setSelectedTime] = useState('');
-
-//     const isStep1Valid =
-//         selectedDate && selectedCinema && selectedLanguage && selectedTime;
-
-//     const handleNext = () => {
-//         if (isStep1Valid) {
-//             setStep(2);
-//         }
-//     };
-
-//     return (
-//         <LocalizationProvider dateAdapter={AdapterDateFns}>
-//             <Box p={3}>
-//                 {step === 1 && (
-//                     <>
-//                         <Typography variant="h6" gutterBottom>
-//                             Step 1: Select Date, Cinema, Language & Time
-//                         </Typography>
-
-//                         <Box
-//                             display="grid"
-//                             gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }}
-//                             gap={2}
-//                         >
-//                             {/* Date Picker */}
-//                             <DatePicker
-//                                 label="Select Date"
-//                                 value={selectedDate}
-//                                 onChange={(newDate) => setSelectedDate(newDate)}
-//                                 enableAccessibleFieldDOMStructure={false}
-//                                 slots={{ textField: TextField }}
-//                                 slotProps={{
-//                                     textField: {
-//                                         fullWidth: true,
-//                                     },
-//                                 }}
-//                             />
-
-//                             {/* Cinema Selector */}
-//                             <FormControl fullWidth>
-//                                 <InputLabel>Select Cinema</InputLabel>
-//                                 <Select
-//                                     value={selectedCinema}
-//                                     onChange={(e) => setSelectedCinema(e.target.value)}
-//                                     label="Select Cinema"
-//                                 >
-//                                     <MenuItem value="Skyline Mall">Skyline Mall</MenuItem>
-//                                     <MenuItem value="City Center">City Center</MenuItem>
-//                                 </Select>
-//                             </FormControl>
-
-//                             {/* Language Selector */}
-//                             <ToggleButtonGroup
-//                                 value={selectedLanguage}
-//                                 exclusive
-//                                 onChange={(e, lang) => setSelectedLanguage(lang)}
-//                                 fullWidth
-//                             >
-//                                 <ToggleButton value="All">All</ToggleButton>
-//                                 <ToggleButton value="Hindi Dubbed">Hindi Dubbed</ToggleButton>
-//                             </ToggleButtonGroup>
-
-//                             {/* Time Slot Selector */}
-//                             <FormControl fullWidth>
-//                                 <InputLabel>Select Time</InputLabel>
-//                                 <Select
-//                                     value={selectedTime}
-//                                     onChange={(e) => setSelectedTime(e.target.value)}
-//                                     label="Select Time"
-//                                 >
-//                                     <MenuItem value="10:00 AM">10:00 AM</MenuItem>
-//                                     <MenuItem value="1:00 PM">1:00 PM</MenuItem>
-//                                     <MenuItem value="4:00 PM">4:00 PM</MenuItem>
-//                                 </Select>
-//                             </FormControl>
-//                         </Box>
-
-//                         <Typography variant="body2" color="error" mt={2}>
-//                             Tickets are required for all admissions. No entry for children under 2.5 feet.
-//                         </Typography>
-
-//                         <Button
-//                             variant="contained"
-//                             color="primary"
-//                             sx={{ mt: 3 }}
-//                             disabled={!isStep1Valid}
-//                             onClick={handleNext}
-//                             fullWidth
-//                         >
-//                             Next
-//                         </Button>
-//                     </>
-//                 )}
-
-//                 {step === 2 && (
-//                     <>
-//                         <Typography variant="h6" gutterBottom>
-//                             Step 2: Select Your Seats
-//                         </Typography>
-
-//                         <Box mt={2}>
-//                             <Typography>Seat selection coming soon...</Typography>
-//                             {/* You can add grid of seat buttons here */}
-//                         </Box>
-
-//                         <Box mt={3} display="flex" justifyContent="space-between">
-//                             <Button variant="outlined" onClick={() => setStep(1)}>
-//                                 Back
-//                             </Button>
-//                             <Button variant="contained" color="success">
-//                                 Confirm Booking
-//                             </Button>
-//                         </Box>
-//                     </>
-//                 )}
-//             </Box>
-//         </LocalizationProvider>
-//     );
-// };
-
-// export default BookingForm;
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     Box,
     Typography,
@@ -162,213 +6,225 @@ import {
     ToggleButtonGroup,
     ToggleButton,
 } from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { MovieDetail } from '../../../types/movie.type';
+import BookingStep1 from '../../../components/ui/BookingStep1';
+import BookingStep2 from '../../../components/ui/BookingStep2';
 
 type BookingFormProps = {
-    movieDetails: MovieDetail
+    movieDetails: MovieDetail;
 };
 
+const getUnique = (arr: string[]) => Array.from(new Set(arr));
 
 const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
     const [step, setStep] = useState(1);
-    const [selectedCinema, setSelectedCinema] = useState<string>('');
-    const [availableDates, setAvailableDates] = useState<string[]>([]);
-    const [selectedDate, setSelectedDate] = useState<string>('');
-    const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
-    const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
+    const [selectedCinema, setSelectedCinema] = useState('');
+    const [selectedDate, setSelectedDate] = useState('');
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState('');
 
-    const cinemas = Object.keys(movieDetails.schedules)
-    console.log(cinemas)
+    const cinemas = useMemo(() => Object.keys(movieDetails.schedules || {}), [movieDetails]);
 
-    const getAvailableDates = (selectedCinema: string) => {
-        const entries = movieDetails.schedules[selectedCinema];
-        if (!entries) return [];
+    const availableDates = useMemo(() => {
+        if (!selectedCinema) return [];
+        const entries = movieDetails.schedules[selectedCinema] || [];
+        return getUnique(entries.map((e) => e.showTime));
+    }, [selectedCinema, movieDetails]);
 
-        return entries.map(entry => entry.showTime);
-    }
+    const availableTimeSlots = useMemo(() => {
+        if (!selectedCinema || !selectedDate) return [];
+        const entries = movieDetails.schedules[selectedCinema] || [];
+        return getUnique(
+            entries
+                .filter((e) => e.showTime === selectedDate)
+                .map((e) => e.startTime)
+        );
+    }, [selectedCinema, selectedDate, movieDetails]);
 
-    const getAvailableTimeSlots = (selectedCinema: string, selectedDate: string) => {
-        const entries = movieDetails.schedules[selectedCinema];
-        if (!entries) return [];
-
-        return entries
-            .filter(entry => entry.showTime === selectedDate)
-            .map(entry => entry.startTime);
-    }
-    // Update available dates when cinema changes
-    useEffect(() => {
-        if (selectedCinema) {
-            const dates = getAvailableDates(selectedCinema)
-            setAvailableDates(dates);
-            setSelectedDate(''); // reset date on cinema change
-        } else {
-            setAvailableDates([]);
-            setSelectedDate('');
-        }
-    }, [selectedCinema]);
-
-
-    useEffect(() => {
-        if (selectedDate) {
-            const timeSlots = getAvailableTimeSlots(selectedCinema, selectedDate)
-            setAvailableTimeSlots(timeSlots)
-            setSelectedTimeSlot('')
-        } else {
-            setAvailableTimeSlots([])
-            setSelectedTimeSlot('')
-        }
-    }, [selectedDate])
-
-    const isStep1Valid = selectedCinema && selectedDate && selectedLanguage;
+    const isStep1Valid = selectedCinema && selectedDate && selectedTimeSlot && selectedLanguage;
 
     const handleNext = () => {
         if (isStep1Valid) setStep(2);
     };
 
+    const handleBack = (step: number) => {
+        setStep(step)
+    }
+
+    const handleSelectedCinema = (cinema: string) => {
+        setSelectedCinema(cinema)
+    }
+
+    const handleSelectedDate = (date: string) => {
+        setSelectedDate(date)
+    }
+
+    const handleSelectedTimeSlot = (timeSlot: string) => {
+        setSelectedTimeSlot(timeSlot)
+    }
+
+    const handleSelectedLanguage = (language: string) => {
+        setSelectedLanguage(language)
+    }
+
+    const resetDependentFields = () => {
+        setSelectedDate('');
+        setSelectedTimeSlot('');
+    };
+
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box p={3}>
-                {step === 1 && (
-                    <>
-                        <Typography variant="h6" gutterBottom>
-                            Step 1: Select Cinema
-                        </Typography>
+                <Typography variant="subtitle1" gutterBottom>
+                    Step {step} of 2
+                </Typography>
+                {step === 1 &&
+                    <BookingStep1
+                    movieDetails={movieDetails}
+                    cinemas={cinemas}
+                    availableDates={availableDates}
+                    availableTimeSlots={availableTimeSlots}
+                    selectedCinema={selectedCinema}
+                    selectedDate={selectedDate}
+                    selectedTimeSlot={selectedTimeSlot}
+                    selectedLanguage={selectedLanguage}
+                    isStep1Valid={isStep1Valid}
+                    handleSelectedCinema={handleSelectedCinema}
+                    handleSelectedDate={handleSelectedDate}
+                    handleSelectedTimeSlot={handleSelectedTimeSlot}
+                    handleSelectedLanguage={handleSelectedLanguage}
+                    handleNext={handleNext}
+                    resetDependentFields={resetDependentFields}
+                    />
+                }
+                {step === 2 && <BookingStep2 handleBack={handleBack} />}
 
-                        {/* Cinema selection boxes */}
-                        <Box display="flex" gap={2} flexWrap="wrap" mb={3}>
-                            {cinemas.map((cinema) => (
-                                <Button
-                                    key={cinema}
-                                    variant={selectedCinema === cinema ? 'contained' : 'outlined'}
-                                    onClick={() => setSelectedCinema(cinema)}
-                                    sx={{ minWidth: 120, flexGrow: 1 }}
-                                >
-                                    {cinema}
-                                </Button>
-                            ))}
-                        </Box>
+                {/* {step === 1 && (
+          <>
+            <Typography variant="h6" gutterBottom>
+              Select Cinema
+            </Typography>
+            <Box display="flex" gap={2} flexWrap="wrap" mb={3}>
+              {cinemas.map((cinema) => (
+                <Button
+                  key={cinema}
+                  variant={selectedCinema === cinema ? 'contained' : 'outlined'}
+                  onClick={() => {
+                    setSelectedCinema(cinema);
+                    resetDependentFields();
+                  }}
+                  sx={{ minWidth: 120, flexGrow: 1 }}
+                  aria-pressed={selectedCinema === cinema}
+                >
+                  {cinema}
+                </Button>
+              ))}
+            </Box>
 
-                        <Typography variant="h6" gutterBottom>
-                            Select Date
-                        </Typography>
+            <Typography variant="h6" gutterBottom>
+              Select Date
+            </Typography>
+            <Box display="flex" gap={2} flexWrap="wrap" mb={3}>
+              {availableDates.length > 0 ? (
+                availableDates.map((date) => (
+                  <Button
+                    key={date}
+                    variant={selectedDate === date ? 'contained' : 'outlined'}
+                    onClick={() => {
+                      setSelectedDate(date);
+                      setSelectedTimeSlot('');
+                    }}
+                    sx={{ minWidth: 100, flexGrow: 1 }}
+                    aria-pressed={selectedDate === date}
+                  >
+                    {formatDate(date)}
+                  </Button>
+                ))
+              ) : (
+                <Typography color="text.secondary">
+                  Please select a cinema to see available dates.
+                </Typography>
+              )}
+            </Box>
 
-                        {/* Date selection boxes */}
-                        <Box display="flex" gap={2} flexWrap="wrap" mb={3}>
-                            {availableDates.length > 0 ? (
-                                availableDates.map((date) => {
-                                    const dateStr = date.toString();
-                                    return (
-                                        <Button
-                                            key={dateStr}
-                                            variant={
-                                                selectedDate?.toString() === dateStr
-                                                    ? 'contained'
-                                                    : 'outlined'
-                                            }
-                                            onClick={() => setSelectedDate(date)}
-                                            sx={{ minWidth: 100, flexGrow: 1 }}
-                                        >
-                                            {date}
-                                        </Button>
-                                    );
-                                })
-                            ) : (
-                                <Typography color="text.secondary">
-                                    Please select a cinema to see available dates.
-                                </Typography>
-                            )}
-                        </Box>
+            <Typography variant="h6" gutterBottom>
+              Select Time Slot
+            </Typography>
+            <Box display="flex" gap={2} flexWrap="wrap" mb={3}>
+              {availableTimeSlots.length > 0 ? (
+                availableTimeSlots.map((timeSlot) => (
+                  <Button
+                    key={timeSlot}
+                    variant={selectedTimeSlot === timeSlot ? 'contained' : 'outlined'}
+                    onClick={() => setSelectedTimeSlot(timeSlot)}
+                    sx={{ minWidth: 100, flexGrow: 1 }}
+                    aria-pressed={selectedTimeSlot === timeSlot}
+                  >
+                    {formatTime(timeSlot)}
+                  </Button>
+                ))
+              ) : (
+                <Typography color="text.secondary">
+                  Please select a date to see time slots.
+                </Typography>
+              )}
+            </Box>
 
-                        <Typography variant="h6" gutterBottom>
-                            Select Time Slot
-                        </Typography>
+            <Typography variant="h6" gutterBottom>
+              Select Language
+            </Typography>
+            <ToggleButtonGroup
+              value={selectedLanguage}
+              exclusive
+              onChange={(e, lang) => setSelectedLanguage(lang)}
+              fullWidth
+              sx={{ mb: 3 }}
+            >
+              <ToggleButton value={movieDetails.language}>{movieDetails.language}</ToggleButton>
+              <ToggleButton value="Hindi Dubbed">Hindi Dubbed</ToggleButton>
+            </ToggleButtonGroup>
 
-                        {/* Date selection boxes */}
-                        <Box display="flex" gap={2} flexWrap="wrap" mb={3}>
-                            {availableTimeSlots.length > 0 ? (
-                                availableTimeSlots.map((timeSlot) => {
-                                    const timeSlotStr = timeSlot.toString();
-                                    return (
-                                        <Button
-                                            key={timeSlotStr}
-                                            variant={
-                                                selectedTimeSlot?.toString() === timeSlotStr
-                                                    ? 'contained'
-                                                    : 'outlined'
-                                            }
-                                            onClick={() => setSelectedTimeSlot(timeSlot)}
-                                            sx={{ minWidth: 100, flexGrow: 1 }}
-                                        >
-                                            {timeSlot}
-                                        </Button>
-                                    );
-                                })
-                            ) : (
-                                <Typography color="text.secondary">
-                                    Please select a cinema to see available dates.
-                                </Typography>
-                            )}
-                        </Box>
+            <Typography variant="body2" color="error" mt={2}>
+              Tickets are required for all admissions. No entry for children under 2.5 feet.
+            </Typography>
 
-                        <Typography variant="h6" gutterBottom>
-                            Select Language
-                        </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mt: 3 }}
+              disabled={!isStep1Valid}
+              onClick={handleNext}
+              fullWidth
+            >
+              Next
+            </Button>
+          </>
+        )}
 
-                        {/* Language toggle buttons */}
-                        <ToggleButtonGroup
-                            value={selectedLanguage}
-                            exclusive
-                            onChange={(e, lang) => setSelectedLanguage(lang)}
-                            fullWidth
-                            sx={{ mb: 3 }}
-                        >
-                            <ToggleButton value="All">All</ToggleButton>
-                            <ToggleButton value="Hindi Dubbed">Hindi Dubbed</ToggleButton>
-                        </ToggleButtonGroup>
-
-                        <Typography variant="body2" color="error" mt={2}>
-                            Tickets are required for all admissions. No entry for children under 2.5 feet.
-                        </Typography>
-
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            sx={{ mt: 3 }}
-                            disabled={!isStep1Valid}
-                            onClick={handleNext}
-                            fullWidth
-                        >
-                            Next
-                        </Button>
-                    </>
-                )}
-
-                {step === 2 && (
-                    <>
-                        <Typography variant="h6" gutterBottom>
-                            Step 2: Select Your Seats
-                        </Typography>
-
-                        <Box mt={2}>
-                            <Typography>Seat selection coming soon...</Typography>
-                        </Box>
-
-                        <Box mt={3} display="flex" justifyContent="space-between">
-                            <Button variant="outlined" onClick={() => setStep(1)}>
-                                Back
-                            </Button>
-                            <Button variant="contained" color="success">
-                                Confirm Booking
-                            </Button>
-                        </Box>
-                    </>
-                )}
+        {step === 2 && (
+          <>
+            <Typography variant="h6" gutterBottom>
+              Select Your Seats
+            </Typography>
+            <Box mt={2}>
+              <Typography>Seat selection coming soon...</Typography>
+            </Box>
+            <Box mt={3} display="flex" justifyContent="space-between">
+              <Button variant="outlined" onClick={() => setStep(1)}>
+                Back
+              </Button>
+              <Button variant="contained" color="success">
+                Confirm Booking
+              </Button>
+            </Box>
+          </>
+        )} */}
             </Box>
         </LocalizationProvider>
     );
 };
 
 export default BookingForm;
+
