@@ -61,3 +61,28 @@ export type MovieDetail = {
     releaseDate: string;
     schedules: Schedules
 };
+
+export type BookingFormProps = {
+    movieDetails: MovieDetail;
+};
+
+export type BookingState = {
+    selectedCinema: string;
+    selectedDate: string;
+    selectedTimeSlot: string;
+    selectedLanguage: string;
+};
+
+export type BookingStateKey = keyof BookingState;
+
+export type BookingStep1Props = {
+    movieDetails: MovieDetail;
+    cinemas: string[];
+    availableDates: string[];
+    availableTimeSlots: string[];
+    bookingState: BookingState;
+    isStep1Valid: string;
+    updateBookingState: (key: BookingStateKey, value: string) => void;
+    handleNext: () => void;
+    resetDependentFields: () => void;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import {
     Box,
     Typography,
@@ -6,25 +6,9 @@ import {
     ToggleButtonGroup,
     ToggleButton,
 } from '@mui/material';
-import { MovieDetail } from '../../types/movie.type';
+import { BookingStep1Props } from '../../types/movie.type';
 
-type BookingStep1Props = {
-    movieDetails: MovieDetail;
-    cinemas: string[];
-    availableDates: string[];
-    availableTimeSlots: string[];
-    selectedCinema: string;
-    selectedDate: string;
-    selectedTimeSlot: string;
-    selectedLanguage: string;
-    isStep1Valid: string;
-    handleSelectedCinema: (cinema: string) => void;
-    handleSelectedDate: (date: string) => void;
-    handleSelectedTimeSlot: (timeSlot: string) => void;
-    handleSelectedLanguage: (language: string) => void
-    handleNext: () => void;
-    resetDependentFields: () => void;
-}
+
 
 const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString('en-GB', {
@@ -45,15 +29,9 @@ const BookingStep1: React.FC<BookingStep1Props> = ({
     cinemas,
     availableDates,
     availableTimeSlots,
-    selectedCinema,
-    selectedDate,
-    selectedTimeSlot,
-    selectedLanguage,
+    bookingState,
     isStep1Valid,
-    handleSelectedCinema,
-    handleSelectedDate,
-    handleSelectedTimeSlot,
-    handleSelectedLanguage,
+    updateBookingState,
     handleNext,
     resetDependentFields
 }) => {
@@ -67,13 +45,13 @@ const BookingStep1: React.FC<BookingStep1Props> = ({
                 {cinemas.map((cinema) => (
                     <Button
                         key={cinema}
-                        variant={selectedCinema === cinema ? 'contained' : 'outlined'}
+                        variant={bookingState.selectedCinema === cinema ? 'contained' : 'outlined'}
                         onClick={() => {
-                            handleSelectedCinema(cinema);
+                            updateBookingState('selectedCinema', cinema);
                             resetDependentFields();
                         }}
                         sx={{ minWidth: 120, flexGrow: 1 }}
-                        aria-pressed={selectedCinema === cinema}
+                        aria-pressed={bookingState.selectedCinema === cinema}
                     >
                         {cinema}
                     </Button>
@@ -88,13 +66,13 @@ const BookingStep1: React.FC<BookingStep1Props> = ({
                     availableDates.map((date) => (
                         <Button
                             key={date}
-                            variant={selectedDate === date ? 'contained' : 'outlined'}
+                            variant={bookingState.selectedDate === date ? 'contained' : 'outlined'}
                             onClick={() => {
-                                handleSelectedDate(date);
-                                handleSelectedTimeSlot('');
+                               updateBookingState('selectedDate',date);
+                               updateBookingState('selectedTimeSlot','');
                             }}
                             sx={{ minWidth: 100, flexGrow: 1 }}
-                            aria-pressed={selectedDate === date}
+                            aria-pressed={bookingState.selectedDate === date}
                         >
                             {formatDate(date)}
                         </Button>
@@ -114,10 +92,10 @@ const BookingStep1: React.FC<BookingStep1Props> = ({
                     availableTimeSlots.map((timeSlot) => (
                         <Button
                             key={timeSlot}
-                            variant={selectedTimeSlot === timeSlot ? 'contained' : 'outlined'}
-                            onClick={() => handleSelectedTimeSlot(timeSlot)}
+                            variant={bookingState.selectedTimeSlot === timeSlot ? 'contained' : 'outlined'}
+                            onClick={() => updateBookingState('selectedTimeSlot',timeSlot)}
                             sx={{ minWidth: 100, flexGrow: 1 }}
-                            aria-pressed={selectedTimeSlot === timeSlot}
+                            aria-pressed={bookingState.selectedTimeSlot === timeSlot}
                         >
                             {formatTime(timeSlot)}
                         </Button>
@@ -133,9 +111,9 @@ const BookingStep1: React.FC<BookingStep1Props> = ({
                 Select Language
             </Typography>
             <ToggleButtonGroup
-                value={selectedLanguage}
+                value={bookingState.selectedLanguage}
                 exclusive
-                onChange={(e, lang) => handleSelectedLanguage(lang)}
+                onChange={(e, lang) => updateBookingState('selectedLanguage',lang)}
                 fullWidth
                 sx={{ mb: 3 }}
             >

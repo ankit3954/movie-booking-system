@@ -171,7 +171,7 @@ export const getMovieByID = async (
         if (!movieDetails) {
             sendResponse(true, res, 200, {}, "No Movies Found")
         }
-        console.log(movieDetails)
+        // console.log(movieDetails)
         sendResponse(true, res, 200, movieDetails, "Movie Details fetched Successfully.")
     } catch (error) {
         next(error)
