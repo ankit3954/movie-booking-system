@@ -15,7 +15,9 @@ const BookingStep2:React.FC<BookingStep2Props> = ({
                 Select Your Seats
             </Typography>
             <Box mt={2}>
-                <Typography>Seat selection coming soon...</Typography>
+                <Typography>Seat selection coming soon...
+                    Explored a way to implement booking of seats.
+                </Typography>
             </Box>
             <Box mt={3} display="flex" justifyContent="space-between">
                 <Button variant="outlined" onClick={() => handleBack(1)}>

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MoviesList from '../Movies/MoviesList/MoviesList'
 import { useApi } from '../../hooks/useApi';
-import { AppData, Location, Movie, Theater } from "../../types/movie.type"
+import { AppData } from "../../types/movie.type"
 import { SelectChangeEvent } from '@mui/material';
 import FilterSection from '../Movies/MoviesList/FilterSection';
 
@@ -45,7 +45,6 @@ const Home = () => {
         movies: movRes.data,
       });
 
-      // console.log(movRes, locRes, theRes)
     };
 
     fetchInitialData();

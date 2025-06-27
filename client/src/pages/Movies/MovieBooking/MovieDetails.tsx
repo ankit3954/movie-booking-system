@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Card, CardMedia, CardContent } from '@mui/material';
+import {Typography, Card, CardMedia, CardContent } from '@mui/material';
 import { MovieDetail } from '../../../types/movie.type';
 
 type MovieDetailsProps = {

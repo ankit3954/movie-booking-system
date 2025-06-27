@@ -1,10 +1,8 @@
-// hooks/useAuth.ts
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { storeToken, getToken, removeToken } from "../utils/helpers/storage";
-// import { User } from '@/types/auth.type'
 import { useApi } from "./useApi";
-import axios from "axios";
+
 
 type User = {
   username?: string;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box } from '@mui/material';
 import MovieDetails from './MovieDetails';
 import BookingForm from './BookingForm';
@@ -24,7 +24,6 @@ const MovieBooking = () => {
     const { movieId } = useParams<{ movieId: string }>()
     const location = useLocation();
     const currentLocation = location.state?.location;
-    // console.log(currentLocation)
     const { get } = useApi();
 
     useEffect(() => {
@@ -46,7 +45,6 @@ const MovieBooking = () => {
 
     return (
         <Box display="flex" height="100vh">
-            {/* Left 30% - Movie Details */}
             <Box
                 flex="0 0 30%"
                 p={2}
@@ -62,8 +60,6 @@ const MovieBooking = () => {
                     movieDetails={movieDetails}
                 />
             </Box>
-
-            {/* Right 70% - Booking Form */}
             <Box
                 flex="1"
                 p={2}

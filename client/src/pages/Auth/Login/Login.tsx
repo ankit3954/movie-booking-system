@@ -11,8 +11,6 @@ import {
   Alert,
   IconButton,
   InputAdornment,
-  Checkbox,
-  FormControlLabel,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Google, Movie } from "@mui/icons-material";
 import { useAuth } from "../../../hooks/useAuth";
