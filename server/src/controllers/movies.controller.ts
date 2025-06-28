@@ -66,8 +66,10 @@ const _getMovieByID = () => `
     (
       SELECT JSON_ARRAYAGG(
         JSON_OBJECT(
+          'movieSchedule', ms_inner.id,
           'showTime', ms_inner.show_time,
-          'startTime', ms_inner.start_time
+          'startTime', ms_inner.start_time,
+          'theaterId', ms_inner.theater_id
         )
       )
       FROM movie_schedules ms_inner
