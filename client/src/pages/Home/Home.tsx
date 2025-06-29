@@ -81,7 +81,7 @@ const Home = () => {
     fetchMovies();
   }, [currentLocation, currentTheater]);
 
-console.log("HI")
+// console.log("HI")
   return (
     <>
       <FilterSection

@@ -103,6 +103,33 @@ const _getTheatre = () => `
         theaters
 `
 
+const _getSeats = () => `
+    select
+        seat_number,
+        seat_type
+    from
+        seats
+    where
+        seats.theater_id = ?
+    order by
+        seat_number;
+`
+
+const _getBookedSeats = () => `
+    select
+        s.seat_number
+    from
+        seats s
+    join booking_seats bs on
+        s.id = bs.seat_id
+    join bookings b on
+        bs.booking_id = b.id
+    where
+        b.schedule_id = ?
+    order by
+        s.seat_number ;
+`
+
 export const getMovies = async (
     req: Request,
     res: Response,
@@ -166,7 +193,7 @@ export const getMovieByID = async (
     next: NextFunction
 ) => {
     try {
-        const {movieId, location} = req.query;
+        const { movieId, location } = req.query;
         // console.log(movieId)
         const result = await executeQuery(_getMovieByID(), [movieId, location, location])
         const movieDetails = result[0]
@@ -180,5 +207,52 @@ export const getMovieByID = async (
     }
 }
 
+export const getSeats = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { theaterId } = req.query;
+        // console.log(theaterId)
+        const seats = await executeQuery(_getSeats(), [theaterId]);
 
-module.exports = { getMovies, getMovieByID, getTheatreLocations, getTheatres }
+        if (!seats) {
+            sendResponse(true, res, 200, {}, "No seats Found")
+        }
+
+        sendResponse(true, res, 200, seats, "Seats Fetched Successfully")
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+export const getBookedSeats = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { movieScheduleId } = req.query;
+        // console.log(movieScheduleId)
+        const bookedSeats = await executeQuery(_getBookedSeats(), [movieScheduleId]);
+
+        if (!bookedSeats) {
+            sendResponse(true, res, 200, {}, "No seats are booked")
+        }
+
+        sendResponse(true, res, 200, bookedSeats, "Booked Seats Fetched Successfully")
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = { 
+    getMovies, 
+    getMovieByID, 
+    getTheatreLocations, 
+    getTheatres, 
+    getSeats, 
+    getBookedSeats
+}

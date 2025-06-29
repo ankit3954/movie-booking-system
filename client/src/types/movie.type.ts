@@ -44,6 +44,8 @@ export type AppData = {
 type ScheduleEntry = {
   showTime: string;
   startTime: string;
+  movieSchedule: string;
+  theaterId: string;
 };
 
 type Schedules = {

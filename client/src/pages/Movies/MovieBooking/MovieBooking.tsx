@@ -41,8 +41,6 @@ const MovieBooking = () => {
     }, []);
 
 
-
-
     return (
         <Box display="flex" height="100vh">
             <Box

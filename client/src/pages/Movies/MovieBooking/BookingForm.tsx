@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { BookingFormProps, BookingState} from '../../../types/movie.type';
+import { BookingFormProps, BookingState } from '../../../types/movie.type';
 import BookingStep1 from '../../../components/ui/BookingStep1';
 import BookingStep2 from '../../../components/ui/BookingStep2';
 
@@ -39,6 +39,18 @@ const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
                 .map((e) => e.startTime)
         );
     }, [bookingState.selectedCinema, bookingState.selectedDate, movieDetails]);
+
+    const schedulesForTheater = useMemo(() => {
+        const entries = movieDetails.schedules[bookingState.selectedCinema];
+        if (!entries) return [];
+
+        return entries
+            .filter(entry => entry.showTime === bookingState.selectedDate)  // compare with selected date
+            .map(entry => ({
+                movieSchedule: entry.movieSchedule,
+                theaterId: entry.theaterId
+            }));
+    }, [bookingState.selectedCinema, bookingState.selectedDate])
 
     const isStep1Valid = bookingState.selectedCinema && bookingState.selectedDate && bookingState.selectedTimeSlot && bookingState.selectedLanguage;
 
@@ -82,7 +94,10 @@ const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
                         resetDependentFields={resetDependentFields}
                     />
                 }
-                {step === 2 && <BookingStep2 handleBack={handleBack} />}
+                {step === 2 && <BookingStep2 
+                                    handleBack={handleBack} 
+                                    schedulesForTheater = {schedulesForTheater}
+                                />}
             </Box>
         </LocalizationProvider>
     );
