@@ -97,6 +97,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
                 {step === 2 && <BookingStep2 
                                     handleBack={handleBack} 
                                     schedulesForTheater = {schedulesForTheater}
+                                    bookingState={bookingState}
+                                    title={movieDetails.title}
                                 />}
             </Box>
         </LocalizationProvider>

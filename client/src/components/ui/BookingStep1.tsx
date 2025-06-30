@@ -10,14 +10,14 @@ import { BookingStep1Props } from '../../types/movie.type';
 
 
 
-const formatDate = (dateStr: string) =>
+export const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString('en-GB', {
         weekday: 'short',
         day: 'numeric',
         month: 'short',
     });
 
-const formatTime = (timeStr: string) =>
+export const formatTime = (timeStr: string) =>
     new Date(`1970-01-01T${timeStr}`).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',

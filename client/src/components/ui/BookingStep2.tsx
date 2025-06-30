@@ -1,6 +1,8 @@
 import { Box, Button, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useApi } from '../../hooks/useApi';
+import BookingDialog from './BookingDialog';
+import { BookingState } from '../../types/movie.type';
 
 
 type ScheduleDetails = {
@@ -9,7 +11,9 @@ type ScheduleDetails = {
 }
 type BookingStep2Props = {
     handleBack: (step: number) => void;
-    schedulesForTheater: ScheduleDetails[]
+    schedulesForTheater: ScheduleDetails[];
+    bookingState: BookingState;
+    title: string;
 }
 
 type Seat = {
@@ -25,12 +29,16 @@ type BookedSeat = {
 
 const BookingStep2: React.FC<BookingStep2Props> = ({
     handleBack,
-    schedulesForTheater
+    schedulesForTheater,
+    bookingState,
+    title
 }) => {
 
     const [seats, setSeats] = useState<(Seat)[]>([]);
     const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
     const { get } = useApi();
+    const [isModalOpen, setModalOpen] = useState<boolean>(false);
+    const [agreed, setAgreed] = useState<boolean>(false);
 
     const { theaterId, movieSchedule } = schedulesForTheater[0]
 
@@ -73,14 +81,20 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
         );
     };
 
+    const handleBookingDialog = (value: boolean) => {
+        setModalOpen(value)
+    }
+
+    
+    const handleAgreement = (value: boolean) => {
+        setAgreed(value)
+    }
+
     return (
-        <Box>
+        <Box display="flex" flexDirection="column" alignItems="center">
             <Typography align="center" mb={2}>🎬 Screen</Typography>
             {Array.from(new Set(seats.map(s => s.seat_number[0]))).map(row => (
                 <Box key={row} display="flex" alignItems="center" mb={1}>
-                    {/* Uncomment this if you want row labels like A, B, C */}
-                    {/* <Typography width={20}>{row}</Typography> */}
-
                     <Box display="flex" gap={0.5}>
                         {seats
                             .filter(seat => seat.seat_number.startsWith(row))
@@ -103,6 +117,26 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
                     </Box>
                 </Box>
             ))}
+            <Box mt={3} display="flex" gap={5}>
+                <Button variant="outlined" onClick={() => handleBack(1)}>
+                    Back
+                </Button>
+                <Button variant="contained" color="success" onClick={() => handleBookingDialog(true)}>
+                    Buy Now
+                </Button>
+            </Box>
+
+            <BookingDialog 
+                isModalOpen={isModalOpen}
+                agreed={agreed}
+                handleBookingDialog={handleBookingDialog}
+                handleAgreement={handleAgreement}
+                bookingState={bookingState}
+                selectedSeats={selectedSeats}
+                title={title}
+            />
+
+
         </Box>
 
 
