@@ -4,7 +4,7 @@ import passport from "./config/passport"
 import { AppError } from "./utils/AppError";
 import { globalErrorHandler } from "./middleware/errorMiddleware";
 import { sendResponse } from "./utils/responseHandler";
-import executeQuery from "./config/db";
+import {executeQuery} from "./config/db";
 import session from "express-session";
 
 

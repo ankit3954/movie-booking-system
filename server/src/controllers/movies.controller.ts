@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import executeQuery from "../config/db";
+import { v4 as uuidv4 } from 'uuid';
+import { executeQuery, executeTransaction } from "../config/db";
 import { sendResponse } from "../utils/responseHandler";
 
 
@@ -130,6 +131,37 @@ const _getBookedSeats = () => `
         s.seat_number ;
 `
 
+const _saveBooking = () => `
+    insert
+        into
+        bookings (id,
+        user_id,
+        schedule_id,
+        total_amount,
+        status)
+    values (?,?,?,?,?);
+`
+
+const _getBookingId = () => `
+    select
+        id
+    from
+        bookings
+    where
+        schedule_id = ?
+        and user_id = ?
+    order by
+        booking_time
+    desc;
+`
+
+const _saveBookedSeats = () => `
+    insert
+        into
+        booking_seats (booking_id,
+        seat_id)
+    values (?,?);
+`
 export const getMovies = async (
     req: Request,
     res: Response,
@@ -248,11 +280,53 @@ export const getBookedSeats = async (
     }
 }
 
-module.exports = { 
-    getMovies, 
-    getMovieByID, 
-    getTheatreLocations, 
-    getTheatres, 
-    getSeats, 
-    getBookedSeats
+export const bookSeats = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { userId, movieScheduleId, totalAmount, status, seatIds } = req.body;
+
+        const bookingId = uuidv4();
+
+        const queries = [
+            {
+                query: _saveBooking(),
+                values: [bookingId, userId, movieScheduleId, totalAmount, status],
+            },
+            ...seatIds.map((seatId: any) => ({
+                query: _saveBookedSeats(),
+                values: [bookingId, seatId],
+            })),
+        ];
+
+        await executeTransaction(queries);
+        // const saveBooking = await executeQuery(_saveBooking(), [userId, movieScheduleId, totalAmount, status])
+        // console.log(saveBooking)
+
+        // const bookingId = await executeQuery(_getBookingId(), [movieScheduleId, userId]);
+        // // console.log(bookingId)
+        // const recentBookingId = bookingId[0].id;
+        // // console.log(seatIds)
+        // seatIds.forEach(async (seatId: any) => {
+        //     await executeQuery(_saveBookedSeats(), [recentBookingId, seatId]);
+        // });
+
+        sendResponse(true, res, 201, {bookingId, seatIds}, "Booking Confirmed")
+        // const saveBookedSeats = await executeQuery(_saveBookedSeats(), [bookingId, seatId]);
+    } catch (error) {
+        next(error)
+    }
 }
+
+module.exports = {
+    getMovies,
+    getMovieByID,
+    getTheatreLocations,
+    getTheatres,
+    getSeats,
+    getBookedSeats,
+    bookSeats
+}
+

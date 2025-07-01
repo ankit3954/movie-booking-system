@@ -16,7 +16,7 @@ const pool = mysql.createPool({
 });
 
 
-function executeQuery(query: string, values: any[]): Promise<any> {
+export function executeQuery(query: string, values: any[]): Promise<any> {
  
   return new Promise((resolve, reject) => {
     pool.getConnection((err: Error | null, connection: PoolConnection) => {
@@ -41,5 +41,57 @@ function executeQuery(query: string, values: any[]): Promise<any> {
 }
 
 
+type QueryWithParams = {
+  query: string;
+  values: any[];
+};
 
-export default executeQuery;
+export const executeTransaction = (queries: QueryWithParams[]): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, connection: PoolConnection) => {
+      if (err) {
+        console.error('Error getting connection from pool:', err);
+        return reject(err);
+      }
+
+      connection.beginTransaction(async (err) => {
+        if (err) {
+          connection.release();
+          console.error('Transaction begin error:', err);
+          return reject(err);
+        }
+
+        try {
+          for (const { query, values } of queries) {
+            await new Promise((res, rej) => {
+              connection.query(query, values, (err, result) => {
+                if (err) return rej(err);
+                res(result);
+              });
+            });
+          }
+
+          connection.commit((err) => {
+            connection.release();
+            if (err) {
+              console.error('Commit error:', err);
+              return reject(err);
+            }
+            resolve(true); // Or return results if needed
+          });
+        } catch (error) {
+          connection.rollback(() => {
+            connection.release();
+            console.error('Transaction rolled back due to error:', error);
+            reject(error);
+          });
+        }
+      });
+    });
+  });
+};
+
+
+
+
+module.exports = { executeQuery, executeTransaction};

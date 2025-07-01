@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import {findOAuthUser, createOAuthUser} from '../models/oauth.model';
 import {createUser} from '../models/user.model';
-import executeQuery from '../config/db';
+import {executeQuery} from '../config/db';
 // import { User } from '../models/User';
 
 export interface User {

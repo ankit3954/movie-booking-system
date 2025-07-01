@@ -1,4 +1,4 @@
-import executeQuery from "../config/db";
+import {executeQuery} from "../config/db";
 import { NextFunction, Request, Response } from "express";
 import { sendResponse } from "../utils/responseHandler";
 import {generateToken} from "../utils/auth"

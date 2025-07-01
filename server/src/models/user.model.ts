@@ -1,4 +1,4 @@
-import executeQuery from "../config/db";
+import {executeQuery} from "../config/db";
 
 const findUserByEmail = async(email: string) => {
     return await executeQuery('SELECT * FROM users WHERE email = ?', [email]);
