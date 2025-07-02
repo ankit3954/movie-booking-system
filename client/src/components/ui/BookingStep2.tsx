@@ -17,14 +17,15 @@ type BookingStep2Props = {
 }
 
 type Seat = {
-    // seat_id: number;
+    id: string;
     seat_number: string;
     seat_type: string;
     is_booked?: boolean;
 };
 
-type BookedSeat = {
+export type BookedSeat = {
     seat_number: string;
+    id: string;
 };
 
 const BookingStep2: React.FC<BookingStep2Props> = ({
@@ -34,15 +35,15 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
     title
 }) => {
 
-    const [seats, setSeats] = useState<(Seat)[]>([]);
-    const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+    const [seats, setSeats] = useState<Seat[]>([]);
+    const [selectedSeats, setSelectedSeats] = useState<BookedSeat[]>([]);
     const { get } = useApi();
     const [isModalOpen, setModalOpen] = useState<boolean>(false);
     const [agreed, setAgreed] = useState<boolean>(false);
 
     const { theaterId, movieSchedule } = schedulesForTheater[0]
 
-    const getBookedSeatNumbers = (bookedSeatDetails: BookedSeat[]) => bookedSeatDetails.map(seat => seat.seat_number);
+    const getBookedSeatNumbers = (bookedSeatDetails: BookedSeat[]) => bookedSeatDetails.map(seat => seat.id);
 
 
     useEffect(() => {
@@ -60,7 +61,7 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
                 // 3. Combine both
                 const mergedSeats = allSeats.map(seat => ({
                     ...seat,
-                    is_booked: bookedSeatNumbers.includes(seat.seat_number),
+                    is_booked: bookedSeatNumbers.includes(seat.id),
                 }));
 
                 setSeats(mergedSeats);
@@ -74,18 +75,24 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
 
 
     const toggleSeat = (seatNumber: string) => {
-        setSelectedSeats(prev =>
-            prev.includes(seatNumber)
-                ? prev.filter(number => number !== seatNumber) // remove if already selected
-                : [...prev, seatNumber]                // add if not selected
-        );
+        setSelectedSeats(prev => {
+            const isSelected = prev.some(seat => seat.seat_number === seatNumber);
+
+            if (isSelected) {
+                return prev.filter(seat => seat.seat_number !== seatNumber); // remove
+            } else {
+                const seatToAdd = seats.find(seat => seat.seat_number === seatNumber);
+                return seatToAdd ? [...prev, seatToAdd] : prev;
+            }
+        });
     };
+
 
     const handleBookingDialog = (value: boolean) => {
         setModalOpen(value)
     }
 
-    
+
     const handleAgreement = (value: boolean) => {
         setAgreed(value)
     }
@@ -100,11 +107,11 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
                             .filter(seat => seat.seat_number.startsWith(row))
                             .map(seat => (
                                 <Button
-                                    key={seat.seat_number}
+                                    key={seat.id}
                                     variant={
                                         seat.is_booked
                                             ? 'contained'
-                                            : selectedSeats.includes(seat.seat_number)
+                                            : selectedSeats.some((s) => s.seat_number === seat.seat_number)
                                                 ? 'outlined'
                                                 : 'text'
                                     }
@@ -126,13 +133,14 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
                 </Button>
             </Box>
 
-            <BookingDialog 
+            <BookingDialog
                 isModalOpen={isModalOpen}
                 agreed={agreed}
                 handleBookingDialog={handleBookingDialog}
                 handleAgreement={handleAgreement}
                 bookingState={bookingState}
                 selectedSeats={selectedSeats}
+                movieSchedule={movieSchedule}
                 title={title}
             />
 

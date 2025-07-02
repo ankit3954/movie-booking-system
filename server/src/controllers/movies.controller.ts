@@ -106,6 +106,7 @@ const _getTheatre = () => `
 
 const _getSeats = () => `
     select
+        id,
         seat_number,
         seat_type
     from
@@ -118,6 +119,7 @@ const _getSeats = () => `
 
 const _getBookedSeats = () => `
     select
+        s.id,
         s.seat_number
     from
         seats s
