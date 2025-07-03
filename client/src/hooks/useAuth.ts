@@ -101,7 +101,7 @@ export const useAuth = () => {
     removeToken();
     setToken(null);
     setUser(null);
-    navigate("/login");
+    // navigate("/login");
   };
 
   return {

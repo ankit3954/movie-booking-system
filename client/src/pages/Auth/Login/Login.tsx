@@ -31,9 +31,9 @@ export default function Login(): JSX.Element {
   const [error, setError] = useState<string>("");
 
   // whenever user goes back to login page by pushng back button instead of logout token is removed
-  useEffect(() => {
-    removeToken()
-  }, [])
+  // useEffect(() => {
+  //   removeToken()
+  // }, [])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value, checked, type } = e.target;
