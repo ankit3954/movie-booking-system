@@ -97,6 +97,8 @@ export const useAuth = () => {
 
   };
 
+  //this authenticated state should be fixed.
+
   const logout = () => {
     removeToken();
     setToken(null);
