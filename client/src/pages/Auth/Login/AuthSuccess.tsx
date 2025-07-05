@@ -1,9 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
+import { storeToken } from "../../../utils/helpers/storage";
 
 const AuthSuccess = () => {
     const navigate = useNavigate();
     const hasRun = useRef(false);
+
+    const {handleToken} = useAuth()
 
     useEffect(() => {
         if (hasRun.current) return;
@@ -17,7 +21,9 @@ const AuthSuccess = () => {
             return;
         }
 
-        localStorage.setItem("authToken", token);
+        // localStorage.setItem("authToken", token);
+        storeToken(token)
+        handleToken(token)
         navigate("/");
     }, [navigate]);
 
