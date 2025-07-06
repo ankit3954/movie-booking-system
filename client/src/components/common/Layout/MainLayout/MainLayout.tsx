@@ -18,6 +18,7 @@ export const MainLayout = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       {/* <Header /> */}
       {/* <Container component="main" > */}
+      {/* //Have to implement user_id integration in booking api. */}
       <AuthProvider>
       {!shouldHideHeader && <Header/>}
         <Outlet />
