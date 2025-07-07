@@ -13,10 +13,12 @@ import {
 } from '@mui/material';
 
 import React, { useEffect, useState } from 'react';
-import { BookingState } from '../../types/movie.type';
+import { BookingState, MovieDetail } from '../../types/movie.type';
 import { formatDate, formatTime } from './BookingStep1';
 import { useApi } from '../../hooks/useApi';
 import { BookedSeat } from './BookingStep2';
+import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 type BookingDialogProps = {
     isModalOpen: boolean;
@@ -25,7 +27,7 @@ type BookingDialogProps = {
     handleAgreement: (value: boolean) => void;
     bookingState: BookingState;
     selectedSeats: BookedSeat[];
-    title: string;
+    movieDetails: MovieDetail;
     movieSchedule: string;
 };
 
@@ -37,6 +39,17 @@ const getSelectedSeatsIds = (selectedSeats: BookedSeat[]) => {
     return selectedSeats.map(seat => seat.id)
 }
 
+function saveRedirectDetails(movieScheduleId: string, totalPrice: number, selectedSeatIds: string[], movieId: string) {
+    localStorage.setItem("bookingRedirectDetails", JSON.stringify({
+        redirectTo: `/movie/booking/${movieId}`,
+        bookingData: {
+            movieScheduleId,
+            totalPrice,
+            selectedSeatIds
+        }
+    }))
+}
+
 const BookingDialog: React.FC<BookingDialogProps> = ({
     isModalOpen,
     agreed,
@@ -45,33 +58,34 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
     bookingState,
     selectedSeats,
     movieSchedule,
-    title
+    movieDetails
 }) => {
     const pricePerSeat = 200;
     const totalPrice = selectedSeats.length * pricePerSeat;
     const { post } = useApi();
-
+    const { user } = useAuth()
+    const navigate = useNavigate()
     const selectedSeatNumbers = getSelectedSeatsNumber(selectedSeats)
     const selectedSeatIds = getSelectedSeatsIds(selectedSeats)
-    // const [selectedSeatNumber, setSelectedSeatNumber] = useState<string[]>([])
-
-    // useEffect(() => {
-    //     setSelectedSeatNumber(getSelectedSeatsNumber(selectedSeats))
-    // }, [selectedSeats])
 
     const handleConfirmBooking = async () => {
-        // TODO: Implement booking API logic
-
         try {
+            if (!user) {
+                saveRedirectDetails(movieSchedule, totalPrice, selectedSeatIds, movieDetails.movieId)
+                alert("Login to proceed")
+                navigate("/login")
+                return
+            }
+
             const saveBookingDetails = await post<any>("http://localhost:5000/movies/bookseats", {
-                userId: "2272304c-41c7-11f0-ae84-a5ce1913142b",
+                userId: user?.id,
                 movieScheduleId: movieSchedule,
                 totalAmount: totalPrice,
                 status: "booked",
                 seatIds: selectedSeatIds
             })
 
-            console.log(saveBookingDetails)
+            alert(saveBookingDetails.message)
         } catch (error) {
             console.log(error)
         }
@@ -87,7 +101,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
 
             <DialogContent dividers>
                 <Stack spacing={2}>
-                    <Typography variant="body1"><strong>Movie:</strong> {title}</Typography>
+                    <Typography variant="body1"><strong>Movie:</strong> {movieDetails.title}</Typography>
                     <Typography variant="body1"><strong>Theater:</strong> {bookingState.selectedCinema}</Typography>
                     <Typography variant="body1"><strong>Date:</strong> {formatDate(bookingState.selectedDate)}</Typography>
                     <Typography variant="body1"><strong>Time:</strong> {formatTime(bookingState.selectedTimeSlot)}</Typography>
@@ -145,3 +159,5 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
 };
 
 export default BookingDialog;
+
+

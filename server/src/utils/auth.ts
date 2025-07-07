@@ -13,8 +13,8 @@ interface CustomRequest extends Request {
     data?: tokenData; // Add the custom `data` property
   }
 
-export async function generateToken(email: string) {
-    const data = {email}
+export async function generateToken(id: string, username: string) {
+    const data = {id, username}
     const accessToken = jwt.sign(data, process.env.JWT_SECRET);
     return accessToken;   
 }   

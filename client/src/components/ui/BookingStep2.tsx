@@ -2,7 +2,8 @@ import { Box, Button, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useApi } from '../../hooks/useApi';
 import BookingDialog from './BookingDialog';
-import { BookingState } from '../../types/movie.type';
+import { BookingState, MovieDetail } from '../../types/movie.type';
+import { useLocation } from 'react-router-dom';
 
 
 type ScheduleDetails = {
@@ -13,7 +14,8 @@ type BookingStep2Props = {
     handleBack: (step: number) => void;
     schedulesForTheater: ScheduleDetails[];
     bookingState: BookingState;
-    title: string;
+    movieDetails: MovieDetail;
+    updateBookingState: () => void;
 }
 
 type Seat = {
@@ -32,7 +34,8 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
     handleBack,
     schedulesForTheater,
     bookingState,
-    title
+    movieDetails,
+    up
 }) => {
 
     const [seats, setSeats] = useState<Seat[]>([]);
@@ -42,9 +45,22 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
     const [agreed, setAgreed] = useState<boolean>(false);
 
     const { theaterId, movieSchedule } = schedulesForTheater[0]
+    const [movieScheduleId, setMovieScheduleId] = useState(movieSchedule)
+
 
     const getBookedSeatNumbers = (bookedSeatDetails: BookedSeat[]) => bookedSeatDetails.map(seat => seat.id);
 
+    const location = useLocation();
+    const bookingData = location.state;
+
+    useEffect(() => {
+        if (bookingData) {
+            setSelectedSeats(bookingData.selectedSeats);
+            setBookingState(bookingData.bookingState);
+            setModalOpen(true); // Reopen the booking modal
+            setMovieScheduleId(bookingData.movieScheduleId)
+        }
+    }, [bookingData]);
 
     useEffect(() => {
         const fetchSeatLayoutWithBooking = async () => {
@@ -141,7 +157,7 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
                 bookingState={bookingState}
                 selectedSeats={selectedSeats}
                 movieSchedule={movieSchedule}
-                title={title}
+                movieDetails={movieDetails}
             />
 
 

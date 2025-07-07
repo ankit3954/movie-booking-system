@@ -139,7 +139,7 @@ import { jwtDecode } from "jwt-decode";
 // Types
 type User = {
   username?: string;
-  email: string;
+  id: string;
 };
 
 type LoginAndRegisterResponse = {
@@ -164,6 +164,8 @@ type AuthContextType = {
   isAuthenticated: boolean;
 };
 
+
+
 // Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -177,6 +179,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { post } = useApi();
 
 
+  const getConditionalNavigation = () => {
+    const pending = localStorage.getItem("bookingRedirectDetails");
+
+    if (pending) {
+      const parsedData = JSON.parse(pending);
+      localStorage.removeItem("bookingRedirectDetails"); // Clean up
+
+      // Redirect back to booking page, pass data via state
+      navigate(parsedData.redirectTo, { state: parsedData.bookingData });
+    } else {
+      // Go to home or profile
+      navigate("/");
+    }
+  }
+
   const handleToken = (token: string) => {
     setToken(token)
   }
@@ -186,7 +203,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (storedToken) {
       try {
         const decoded: any = jwtDecode(storedToken);
-        setUser({ email: decoded.email, username: decoded.username });
+        setUser({ id: decoded.id, username: decoded.username });
         setToken(storedToken);
       } catch (err) {
         console.error("Invalid token");
@@ -210,11 +227,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (result.success && token) {
         storeToken(token);
         setToken(token);
-
         const decoded: any = jwtDecode(token);
-        setUser({ email: decoded.email, username: decoded.username });
-
-        navigate("/");
+        setUser({ id: decoded.id, username: decoded.username });
+        getConditionalNavigation()
+        // navigate("/");
         return true;
       } else {
         alert("Login failed: " + result.message);

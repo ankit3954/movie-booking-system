@@ -4,13 +4,14 @@ import {createUser} from '../models/user.model';
 import {executeQuery} from '../config/db';
 // import { User } from '../models/User';
 
-export interface User {
-    id: number;
-    username: string;
-    email: string;
-    password?: string;
-    oauth_provider?: string;
-    oauth_id?: string;
+interface User {
+  user_id: string
+    // id: number;
+    // username: string;
+    // email: string;
+    // password?: string;
+    // oauth_provider?: string;
+    // oauth_id?: string;
   }
   
 
@@ -26,7 +27,7 @@ export const authenticateOAuthUser = async (
     const existingOAuthUsers = await findOAuthUser(provider, providerUserId);
     if (existingOAuthUsers.length > 0) {
       const user: User = existingOAuthUsers[0];
-      const token = jwt.sign({ id: user.id, username: displayName }, secretKey, { expiresIn: '1h' });
+      const token = jwt.sign({ id: user.user_id, username: displayName }, secretKey, { expiresIn: '1h' });
       return token;
     }
 

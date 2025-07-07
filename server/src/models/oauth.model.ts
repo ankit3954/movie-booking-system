@@ -2,7 +2,7 @@ import {executeQuery} from "../config/db";
 
 
 export const findOAuthUser = async(provider:string, providerUserId: string) => {
-    const result = await executeQuery('SELECT * FROM oauth_providers WHERE provider = ? AND provider_user_id = ?', 
+    const result = await executeQuery('SELECT user_id FROM oauth_providers WHERE provider = ? AND provider_user_id = ?', 
     [provider, providerUserId]);
     return result
 };

@@ -98,7 +98,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
                                     handleBack={handleBack} 
                                     schedulesForTheater = {schedulesForTheater}
                                     bookingState={bookingState}
-                                    title={movieDetails.title}
+                                    movieDetails={movieDetails}
+                                    updateBookingState= {updateBookingState}
                                 />}
             </Box>
         </LocalizationProvider>
