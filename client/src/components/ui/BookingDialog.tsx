@@ -39,10 +39,11 @@ const getSelectedSeatsIds = (selectedSeats: BookedSeat[]) => {
     return selectedSeats.map(seat => seat.id)
 }
 
-function saveRedirectDetails(movieScheduleId: string, totalPrice: number, selectedSeatIds: string[], movieId: string) {
+function saveRedirectDetails(bookingState:BookingState, movieScheduleId: string, totalPrice: number, selectedSeatIds: string[], movieId: string) {
     localStorage.setItem("bookingRedirectDetails", JSON.stringify({
         redirectTo: `/movie/booking/${movieId}`,
         bookingData: {
+            bookingState: bookingState,
             movieScheduleId,
             totalPrice,
             selectedSeatIds
@@ -71,7 +72,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
     const handleConfirmBooking = async () => {
         try {
             if (!user) {
-                saveRedirectDetails(movieSchedule, totalPrice, selectedSeatIds, movieDetails.movieId)
+                saveRedirectDetails(bookingState, movieSchedule, totalPrice, selectedSeatIds, movieDetails.movieId)
                 alert("Login to proceed")
                 navigate("/login")
                 return

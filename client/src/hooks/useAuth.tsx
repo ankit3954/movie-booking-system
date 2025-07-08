@@ -187,6 +187,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem("bookingRedirectDetails"); // Clean up
 
       // Redirect back to booking page, pass data via state
+      console.log("parsedData", parsedData.bookingData)
       navigate(parsedData.redirectTo, { state: parsedData.bookingData });
     } else {
       // Go to home or profile

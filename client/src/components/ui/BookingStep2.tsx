@@ -15,7 +15,7 @@ type BookingStep2Props = {
     schedulesForTheater: ScheduleDetails[];
     bookingState: BookingState;
     movieDetails: MovieDetail;
-    updateBookingState: () => void;
+    handleBookingState: (bookingState: BookingState) => void;
 }
 
 type Seat = {
@@ -35,7 +35,7 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
     schedulesForTheater,
     bookingState,
     movieDetails,
-    up
+    handleBookingState
 }) => {
 
     const [seats, setSeats] = useState<Seat[]>([]);
@@ -46,7 +46,7 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
 
     const { theaterId, movieSchedule } = schedulesForTheater[0]
     const [movieScheduleId, setMovieScheduleId] = useState(movieSchedule)
-
+    const [bookingDetails, setBookingDetails] = useState(bookingState)
 
     const getBookedSeatNumbers = (bookedSeatDetails: BookedSeat[]) => bookedSeatDetails.map(seat => seat.id);
 
@@ -54,9 +54,11 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
     const bookingData = location.state;
 
     useEffect(() => {
-        if (bookingData) {
+        console.log("Booking Data",bookingData)
+        if (bookingData && bookingData.selectedSeats && bookingData.bookingState && bookingData.movieScheduleId) {
+            console.log("I am here")
             setSelectedSeats(bookingData.selectedSeats);
-            setBookingState(bookingData.bookingState);
+            setBookingDetails(bookingData.bookingState);
             setModalOpen(true); // Reopen the booking modal
             setMovieScheduleId(bookingData.movieScheduleId)
         }
@@ -154,10 +156,11 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
                 agreed={agreed}
                 handleBookingDialog={handleBookingDialog}
                 handleAgreement={handleAgreement}
-                bookingState={bookingState}
+                bookingState={bookingDetails}
                 selectedSeats={selectedSeats}
                 movieSchedule={movieSchedule}
                 movieDetails={movieDetails}
+
             />
 
 

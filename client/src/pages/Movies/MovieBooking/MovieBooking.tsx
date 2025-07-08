@@ -30,7 +30,7 @@ const MovieBooking = () => {
         const fetchMovieDetails = async () => {
             let url = `http://localhost:5000/movies/getById?movieId=${movieId}`;
 
-            if (currentLocation.trim() !== '') {
+            if (currentLocation && currentLocation.trim() !== '') {
                 url += `&location=${encodeURIComponent(currentLocation)}`;
             }
             const res = await get<any>(url);
