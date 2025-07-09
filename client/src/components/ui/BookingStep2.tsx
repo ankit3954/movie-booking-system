@@ -53,6 +53,8 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
     const location = useLocation();
     const bookingData = location.state;
 
+    //working on retaining state for redirect 
+
     useEffect(() => {
         console.log("Booking Data",bookingData)
         if (bookingData && bookingData.selectedSeats && bookingData.bookingState && bookingData.movieScheduleId) {
