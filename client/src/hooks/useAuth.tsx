@@ -188,7 +188,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Redirect back to booking page, pass data via state
       console.log("parsedData", parsedData.bookingData)
-      navigate(parsedData.redirectTo, { state: parsedData.bookingData });
+      // navigate(parsedData.redirectTo, { state: parsedData.bookingData });
+      navigate(parsedData.redirectTo)
     } else {
       // Go to home or profile
       navigate("/");

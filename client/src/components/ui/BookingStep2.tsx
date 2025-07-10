@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { useApi } from '../../hooks/useApi';
 import BookingDialog from './BookingDialog';
 import { BookingState, MovieDetail } from '../../types/movie.type';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 
 type ScheduleDetails = {
@@ -30,6 +31,18 @@ export type BookedSeat = {
     id: string;
 };
 
+function saveRedirectDetails( movieId: string) {
+    localStorage.setItem("bookingRedirectDetails", JSON.stringify({
+        redirectTo: `/movie/booking/${movieId}`,
+        // bookingData: {
+        //     bookingState: bookingState,
+        //     movieScheduleId,
+        //     totalPrice,
+        //     selectedSeatIds
+        // }
+    }))
+}
+
 const BookingStep2: React.FC<BookingStep2Props> = ({
     handleBack,
     schedulesForTheater,
@@ -41,30 +54,32 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
     const [seats, setSeats] = useState<Seat[]>([]);
     const [selectedSeats, setSelectedSeats] = useState<BookedSeat[]>([]);
     const { get } = useApi();
+    const {user} = useAuth()
+    const navigate = useNavigate()
     const [isModalOpen, setModalOpen] = useState<boolean>(false);
     const [agreed, setAgreed] = useState<boolean>(false);
 
     const { theaterId, movieSchedule } = schedulesForTheater[0]
-    const [movieScheduleId, setMovieScheduleId] = useState(movieSchedule)
-    const [bookingDetails, setBookingDetails] = useState(bookingState)
+    // const [movieScheduleId, setMovieScheduleId] = useState(movieSchedule)
+    // const [bookingDetails, setBookingDetails] = useState(bookingState)
 
     const getBookedSeatNumbers = (bookedSeatDetails: BookedSeat[]) => bookedSeatDetails.map(seat => seat.id);
 
-    const location = useLocation();
-    const bookingData = location.state;
+    // const location = useLocation();
+    // const bookingData = location.state;
 
     //working on retaining state for redirect 
 
-    useEffect(() => {
-        console.log("Booking Data",bookingData)
-        if (bookingData && bookingData.selectedSeats && bookingData.bookingState && bookingData.movieScheduleId) {
-            console.log("I am here")
-            setSelectedSeats(bookingData.selectedSeats);
-            setBookingDetails(bookingData.bookingState);
-            setModalOpen(true); // Reopen the booking modal
-            setMovieScheduleId(bookingData.movieScheduleId)
-        }
-    }, [bookingData]);
+    // useEffect(() => {
+    //     console.log("Booking Data",bookingData)
+    //     if (bookingData && bookingData.selectedSeats && bookingData.bookingState && bookingData.movieScheduleId) {
+    //         console.log("I am here")
+    //         setSelectedSeats(bookingData.selectedSeats);
+    //         setBookingDetails(bookingData.bookingState);
+    //         setModalOpen(true); // Reopen the booking modal
+    //         setMovieScheduleId(bookingData.movieScheduleId)
+    //     }
+    // }, [bookingData]);
 
     useEffect(() => {
         const fetchSeatLayoutWithBooking = async () => {
@@ -109,7 +124,18 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
 
 
     const handleBookingDialog = (value: boolean) => {
-        setModalOpen(value)
+        try {
+             if (!user) {
+                saveRedirectDetails(movieDetails.movieId)
+                alert("Login to proceed")
+                navigate("/login")
+                return
+            }else{
+                setModalOpen(value)
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 
@@ -158,14 +184,11 @@ const BookingStep2: React.FC<BookingStep2Props> = ({
                 agreed={agreed}
                 handleBookingDialog={handleBookingDialog}
                 handleAgreement={handleAgreement}
-                bookingState={bookingDetails}
+                bookingState={bookingState}
                 selectedSeats={selectedSeats}
                 movieSchedule={movieSchedule}
                 movieDetails={movieDetails}
-
             />
-
-
         </Box>
 
 
