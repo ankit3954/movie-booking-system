@@ -13,12 +13,9 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff, Movie } from "@mui/icons-material";
 import { useAuth } from "../../../hooks/useAuth";
+import { RegisterForm } from "../../../types/movie.type";
 
-interface RegisterForm {
-    username: string,
-    email: string;
-    password: string;
-}
+
 
 const Register = (): JSX.Element => {
     const { register, loading } = useAuth();

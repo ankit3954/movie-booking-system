@@ -1,14 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardMedia, Typography, Box } from '@mui/material';
-
-type MovieCardProps = {
-  title: string;
-  description: string;
-  posterUrl: string;
-  // movieId: string;
-  // handleClick: (movieId: string) => void;
-  handleClick: () => void;
-};
+import { MovieCardProps } from '../../types/movie.type';
 
 const MovieCard: React.FC<MovieCardProps> = ({ title, description, posterUrl, handleClick }) => {
   return (

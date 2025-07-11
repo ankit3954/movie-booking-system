@@ -4,13 +4,11 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   Box,
   Button,
   Typography,
 } from '@mui/material';
 import { FilterSectionProps } from '../../../types/movie.type';
-
 
 
 const FilterSection: React.FC<FilterSectionProps> = ({

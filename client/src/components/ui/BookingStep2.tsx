@@ -2,34 +2,10 @@ import { Box, Button, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useApi } from '../../hooks/useApi';
 import BookingDialog from './BookingDialog';
-import { BookingState, MovieDetail } from '../../types/movie.type';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { BookedSeat, BookingStep2Props, Seat } from '../../types/movie.type';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
-
-type ScheduleDetails = {
-    movieSchedule: string;
-    theaterId: string;
-}
-type BookingStep2Props = {
-    handleBack: (step: number) => void;
-    schedulesForTheater: ScheduleDetails[];
-    bookingState: BookingState;
-    movieDetails: MovieDetail;
-    handleBookingState: (bookingState: BookingState) => void;
-}
-
-type Seat = {
-    id: string;
-    seat_number: string;
-    seat_type: string;
-    is_booked?: boolean;
-};
-
-export type BookedSeat = {
-    seat_number: string;
-    id: string;
-};
 
 function saveRedirectDetails( movieId: string) {
     localStorage.setItem("bookingRedirectDetails", JSON.stringify({

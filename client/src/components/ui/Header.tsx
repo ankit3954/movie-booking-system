@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Box, Button, InputBase } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, InputBase } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
@@ -42,7 +42,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Header: React.FC = () => {
   const navigate = useNavigate();
 
-  const {isAuthenticated, logout, token} = useAuth()
+  const { logout, token} = useAuth()
 
   console.log("token", token)
 

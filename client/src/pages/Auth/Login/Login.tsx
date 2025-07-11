@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent, JSX, useEffect } from "react";
+import React, { useState, ChangeEvent, FormEvent, JSX } from "react";
 import {
   Box,
   Container,
@@ -14,12 +14,9 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff, Google, Movie } from "@mui/icons-material";
 import { useAuth } from "../../../hooks/useAuth";
-import { removeToken } from "../../../utils/helpers/storage";
+import { LoginForm } from "../../../types/movie.type";
 
-interface LoginForm {
-  email: string;
-  password: string;
-}
+
 
 export default function Login(): JSX.Element {
   const { login, loading } = useAuth();

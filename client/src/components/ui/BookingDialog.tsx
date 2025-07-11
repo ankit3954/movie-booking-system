@@ -12,24 +12,13 @@ import {
     Box
 } from '@mui/material';
 
-import React, { useEffect, useState } from 'react';
-import { BookingState, MovieDetail } from '../../types/movie.type';
+import React from 'react';
+import { BookedSeat, BookingDialogProps} from '../../types/movie.type';
 import { formatDate, formatTime } from './BookingStep1';
 import { useApi } from '../../hooks/useApi';
-import { BookedSeat } from './BookingStep2';
 import { useAuth } from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 
-type BookingDialogProps = {
-    isModalOpen: boolean;
-    agreed: boolean;
-    handleBookingDialog: (value: boolean) => void;
-    handleAgreement: (value: boolean) => void;
-    bookingState: BookingState;
-    selectedSeats: BookedSeat[];
-    movieDetails: MovieDetail;
-    movieSchedule: string;
-};
+
 
 const getSelectedSeatsNumber = (selectedSeats: BookedSeat[]) => {
     return selectedSeats.map(seat => seat.seat_number)
@@ -54,7 +43,6 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
     const totalPrice = selectedSeats.length * pricePerSeat;
     const { post } = useApi();
     const { user } = useAuth()
-    const navigate = useNavigate()
     const selectedSeatNumbers = getSelectedSeatsNumber(selectedSeats)
     const selectedSeatIds = getSelectedSeatsIds(selectedSeats)
 
@@ -141,7 +129,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
                     variant="contained"
                     color="primary"
                 >
-                    Confirm Booking
+                    Proceed to Pay
                 </Button>
             </DialogActions>
         </Dialog>

@@ -1,10 +1,7 @@
 import React from 'react';
 import {Typography, Card, CardMedia, CardContent } from '@mui/material';
-import { MovieDetail } from '../../../types/movie.type';
+import { MovieDetailsProps } from '../../../types/movie.type';
 
-type MovieDetailsProps = {
-  movieDetails: MovieDetail
-};
 
 const MovieDetails: React.FC<MovieDetailsProps> = ({
   movieDetails

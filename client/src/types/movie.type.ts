@@ -88,3 +88,98 @@ export type BookingStep1Props = {
     handleNext: () => void;
     resetDependentFields: () => void;
 }
+
+export type BookingDialogProps = {
+    isModalOpen: boolean;
+    agreed: boolean;
+    handleBookingDialog: (value: boolean) => void;
+    handleAgreement: (value: boolean) => void;
+    bookingState: BookingState;
+    selectedSeats: BookedSeat[];
+    movieDetails: MovieDetail;
+    movieSchedule: string;
+};
+
+export type ScheduleDetails = {
+    movieSchedule: string;
+    theaterId: string;
+}
+
+export type BookingStep2Props = {
+    handleBack: (step: number) => void;
+    schedulesForTheater: ScheduleDetails[];
+    bookingState: BookingState;
+    movieDetails: MovieDetail;
+    handleBookingState: (bookingState: BookingState) => void;
+}
+
+export type Seat = {
+    id: string;
+    seat_number: string;
+    seat_type: string;
+    is_booked?: boolean;
+};
+
+export type BookedSeat = {
+    seat_number: string;
+    id: string;
+};
+
+export type MovieCardProps = {
+  title: string;
+  description: string;
+  posterUrl: string;
+  // movieId: string;
+  // handleClick: (movieId: string) => void;
+  handleClick: () => void;
+};
+
+
+// Types
+export type User = {
+  username?: string;
+  id: string;
+};
+
+export type LoginAndRegisterResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: string; // token
+};
+
+export type AuthContextType = {
+  user: User | null;
+  token: string | null;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (
+    username: string,
+    email: string,
+    password: string
+  ) => Promise<boolean>;
+  logout: () => void;
+  handleToken: (token: string) => void;
+  loading: boolean;
+  isAuthenticated: boolean;
+};
+
+export type LoginForm = {
+  email: string;
+  password: string;
+}
+
+export type RegisterForm = {
+    username: string,
+    email: string;
+    password: string;
+}
+
+
+export type MovieDetailsProps = {
+  movieDetails: MovieDetail
+};
+
+export type MoviesListProps = {
+  movies: Movie[];
+  currentLocation: string;
+};

@@ -9,8 +9,6 @@ import { BookingFormProps, BookingState } from '../../../types/movie.type';
 import BookingStep1 from '../../../components/ui/BookingStep1';
 import BookingStep2 from '../../../components/ui/BookingStep2';
 
-
-
 const getUnique = (arr: string[]) => Array.from(new Set(arr));
 
 const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
