@@ -66,7 +66,8 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
             const createSession =  await post<any>("http://localhost:5000/payment/create-checkout-session", {
                 movieName: movieDetails.title,
                 amount: pricePerSeat,
-                quantity: selectedSeatIds.length
+                quantity: selectedSeatIds.length,
+                bookingId: saveBookingDetails.data.bookingId
             })
 
             window.location.href = createSession.data.url;

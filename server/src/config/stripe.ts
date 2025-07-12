@@ -1,4 +1,5 @@
 import dotenv from "dotenv"
+import { updateBookingsStatus } from "../controllers/movies.controller"
 
 dotenv.config()
 
@@ -7,7 +8,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const YOUR_DOMAIN = 'http://localhost:3000'
 
 
-export const createStripeCheckoutSession = async (movieName: string, amount: number, quantity: number) => {
+export const createStripeCheckoutSession = async (movieName: string, amount: number, quantity: number, bookingId: string) => {
 
     const amountInPaise = amount * 100;
     console.log(movieName, amount, quantity)
@@ -24,9 +25,12 @@ export const createStripeCheckoutSession = async (movieName: string, amount: num
                 quantity: quantity,
             },
         ],
+        metadata:{
+            bookingId: bookingId,
+        },
         mode: 'payment',
-        success_url: `${YOUR_DOMAIN}/success`,
-        cancel_url: `${YOUR_DOMAIN}/cancel`,
+        success_url: `${YOUR_DOMAIN}/payment/success`,
+        cancel_url: `${YOUR_DOMAIN}/payment/cancel`,
     });
 
     return session
@@ -41,6 +45,11 @@ export const stripeWebhook = (body: any, sig: string) => {
         const session = event.data.object;
         console.log("✅ Payment successful:", session.id);
 
+        const bookingId = session.metadata?.bookingId;
+
+        if(bookingId){
+            updateBookingsStatus(bookingId)
+        }
         // Update booking status in your DB here using session ID or metadata
     }
 

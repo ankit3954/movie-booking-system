@@ -1,4 +1,4 @@
-import {createBrowserRouter} from "react-router-dom"
+import { createBrowserRouter } from "react-router-dom"
 import { MainLayout } from "./components/common/Layout/MainLayout/MainLayout"
 import Login from "./pages/Auth/Login/Login"
 import AuthSuccess from "./pages/Auth/Login/AuthSuccess"
@@ -9,8 +9,8 @@ import MovieBooking from "./pages/Movies/MovieBooking/MovieBooking"
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <MainLayout/>,
-        children:[
+        element: <MainLayout />,
+        children: [
             {
                 index: true,
                 element: <Home />
@@ -30,6 +30,14 @@ export const router = createBrowserRouter([
             {
                 path: '/movie/booking/:movieId',
                 element: <MovieBooking />
+            },
+            {
+                path: '/payment/success',
+                element: <p>Success</p>
+            },
+                        {
+                path: '/payment/cancel',
+                element: <p>Failed</p>
             }
         ]
     }

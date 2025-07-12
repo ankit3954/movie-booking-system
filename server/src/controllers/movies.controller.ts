@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { v4 as uuidv4 } from 'uuid';
 import { executeQuery, executeTransaction } from "../config/db";
 import { sendResponse } from "../utils/responseHandler";
+import { nextTick } from "process";
 
 
 // const _getMovies = () => `
@@ -164,6 +165,16 @@ const _saveBookedSeats = () => `
         seat_id)
     values (?,?);
 `
+
+const _updateBookingStatus = () => `
+    update
+	bookings
+set
+	status = 'booked'
+where
+	id = ?
+`
+
 export const getMovies = async (
     req: Request,
     res: Response,
@@ -322,6 +333,14 @@ export const bookSeats = async (
     }
 }
 
+export const updateBookingsStatus = async (bookingId: string) => {
+    try {
+        const updateStatus = await executeQuery(_updateBookingStatus(), [bookingId])
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 module.exports = {
     getMovies,
     getMovieByID,
@@ -329,6 +348,7 @@ module.exports = {
     getTheatres,
     getSeats,
     getBookedSeats,
-    bookSeats
+    bookSeats,
+    updateBookingsStatus
 }
 

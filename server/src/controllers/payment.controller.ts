@@ -9,8 +9,8 @@ export const createCheckoutSession = async(
 ) => {
 
     try {
-        const { movieName, amount, quantity } = req.body;
-        const session = await createStripeCheckoutSession(movieName, amount, quantity)
+        const { movieName, amount, quantity, bookingId } = req.body;
+        const session = await createStripeCheckoutSession(movieName, amount, quantity, bookingId)
 
         sendResponse(true, res, 201, {url: session.url}, "Checkout Session Created")
     } catch (error) {

@@ -44,8 +44,6 @@ const Header: React.FC = () => {
 
   const { logout, token} = useAuth()
 
-  console.log("token", token)
-
   const handleSignInAndSignOut = () => {
     if(token){
         logout()

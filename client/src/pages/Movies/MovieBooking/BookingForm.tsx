@@ -20,7 +20,6 @@ const BookingForm: React.FC<BookingFormProps> = ({ movieDetails }) => {
         selectedLanguage: '',
     });
 
-    console.log("Booking State", bookingState)
     const cinemas = useMemo(() => Object.keys(movieDetails.schedules || {}), [movieDetails]);
 
     const availableDates = useMemo(() => {
