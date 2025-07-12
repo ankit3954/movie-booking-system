@@ -54,16 +54,24 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
             //     navigate("/login")
             //     return
             // }
-
+            
             const saveBookingDetails = await post<any>("http://localhost:5000/movies/bookseats", {
                 userId: user?.id,
                 movieScheduleId: movieSchedule,
                 totalAmount: totalPrice,
-                status: "booked",
+                status: "pending",
                 seatIds: selectedSeatIds
             })
 
-            alert(saveBookingDetails.message)
+            const createSession =  await post<any>("http://localhost:5000/payment/create-checkout-session", {
+                movieName: movieDetails.title,
+                amount: pricePerSeat,
+                quantity: selectedSeatIds.length
+            })
+
+            window.location.href = createSession.data.url;
+
+            // alert(saveBookingDetails.message)
         } catch (error) {
             console.log(error)
         }

@@ -11,11 +11,15 @@ import session from "express-session";
 const authRouter = require("./routes/auth.router")
 const oauthRouter = require("./routes/oauth.router")
 const moviesRouter = require("./routes/movies.router")
+const paymentsRouter = require("./routes/payment.router")
 
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
+
+app.use('/payment', paymentsRouter)
+
 app.use(express.json());
  
 app.use(
@@ -33,6 +37,7 @@ app.use(passport.session());
 app.use('/auth', authRouter)
 app.use('/oauth', oauthRouter)
 app.use('/movies', moviesRouter)
+
 
 
 app.get("/ping", async (req, res, next) => {

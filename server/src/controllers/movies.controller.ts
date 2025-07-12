@@ -128,7 +128,7 @@ const _getBookedSeats = () => `
     join bookings b on
         bs.booking_id = b.id
     where
-        b.schedule_id = ?
+        b.schedule_id = ? and b.status = 'booked'
     order by
         s.seat_number ;
 `
