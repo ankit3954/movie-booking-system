@@ -1,8 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import { createStripeCheckoutSession, stripeWebhook } from "../config/stripe";
 import { sendResponse } from "../utils/responseHandler";
+import { executeQuery } from "../config/db";
 
-export const createCheckoutSession = async(
+const _getBookingStatus = () => `
+    select
+        status
+    from
+        bookings
+    where
+        id = ?
+`
+
+export const createCheckoutSession = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -12,7 +22,7 @@ export const createCheckoutSession = async(
         const { movieName, amount, quantity, bookingId } = req.body;
         const session = await createStripeCheckoutSession(movieName, amount, quantity, bookingId)
 
-        sendResponse(true, res, 201, {url: session.url}, "Checkout Session Created")
+        sendResponse(true, res, 201, { url: session.url }, "Checkout Session Created")
     } catch (error) {
         next(error)
     }
@@ -35,7 +45,27 @@ export const handleStripeWebhook = (
 }
 
 
+export const getBookingStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { bookingId } = req.query;
+        console.log(bookingId)
+        const result = await executeQuery(_getBookingStatus(), [bookingId])
+        const bookingStatus = result[0]
+        console.log(bookingStatus)
+        sendResponse(true, res, 200, bookingStatus, "Status Successfully Fetched")
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+
 module.exports = {
     createCheckoutSession,
-    handleStripeWebhook
+    handleStripeWebhook,
+    getBookingStatus
 }

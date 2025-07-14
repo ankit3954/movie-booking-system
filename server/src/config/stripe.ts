@@ -11,7 +11,6 @@ const YOUR_DOMAIN = 'http://localhost:3000'
 export const createStripeCheckoutSession = async (movieName: string, amount: number, quantity: number, bookingId: string) => {
 
     const amountInPaise = amount * 100;
-    console.log(movieName, amount, quantity)
     const session = await stripe.checkout.sessions.create({
         line_items: [
             {
@@ -29,8 +28,8 @@ export const createStripeCheckoutSession = async (movieName: string, amount: num
             bookingId: bookingId,
         },
         mode: 'payment',
-        success_url: `${YOUR_DOMAIN}/payment/success`,
-        cancel_url: `${YOUR_DOMAIN}/payment/cancel`,
+        success_url: `${YOUR_DOMAIN}/payment/success?bookingId=${bookingId}`,
+        cancel_url: `${YOUR_DOMAIN}/payment/cancel?bookingId=${bookingId}`,
     });
 
     return session
@@ -43,7 +42,6 @@ export const stripeWebhook = (body: any, sig: string) => {
 
     if (event.type === "checkout.session.completed") {
         const session = event.data.object;
-        console.log("✅ Payment successful:", session.id);
 
         const bookingId = session.metadata?.bookingId;
 

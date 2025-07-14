@@ -39,6 +39,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
     movieSchedule,
     movieDetails
 }) => {
+
     const pricePerSeat = 200;
     const totalPrice = selectedSeats.length * pricePerSeat;
     const { post } = useApi();

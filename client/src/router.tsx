@@ -5,6 +5,8 @@ import AuthSuccess from "./pages/Auth/Login/AuthSuccess"
 import Register from "./pages/Auth/Register/Register"
 import Home from "./pages/Home/Home"
 import MovieBooking from "./pages/Movies/MovieBooking/MovieBooking"
+import PaymentSuccess from "./pages/Payments/PaymentSuccess"
+import PaymentFailed from "./pages/Payments/PaymentFailed"
 
 export const router = createBrowserRouter([
     {
@@ -33,11 +35,11 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/payment/success',
-                element: <p>Success</p>
+                element: <PaymentSuccess />
             },
-                        {
+            {
                 path: '/payment/cancel',
-                element: <p>Failed</p>
+                element: <PaymentFailed />
             }
         ]
     }
