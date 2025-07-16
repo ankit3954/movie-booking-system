@@ -22,6 +22,7 @@ app.use('/payment', paymentsRouter)
 
 app.use(express.json());
  //implement a nodemailer for users to get email when they book ticket.
+ //will implement  this.
 app.use(
     session({
       secret: process.env.SESSION_SECRET as string, // Store this in .env
