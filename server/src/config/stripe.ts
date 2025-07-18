@@ -45,13 +45,11 @@ export const stripeWebhook = (body: any, sig: string) => {
 
         const bookingId = session.metadata?.bookingId;
 
+        //updating booking status in db after confirming payment using webhook
         if(bookingId){
             updateBookingsStatus(bookingId)
         }
-        // Update booking status in your DB here using session ID or metadata
     }
-
-    // res.status(200).send("Webhook received");
 
 }
 
