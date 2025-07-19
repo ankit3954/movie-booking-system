@@ -175,6 +175,27 @@ where
 	id = ?
 `
 
+const _getBookingDetails = () =>   `
+SELECT 
+  b.id AS bookingId,
+  u.username as userName, 
+  u.email AS userEmail,
+  m.title AS movieName, 
+  t.name AS theaterName,
+  ms.show_time AS showTime, 
+  ms.start_time AS startTime,
+  JSON_ARRAYAGG(s.seat_number) AS seats
+FROM bookings b
+JOIN users u ON b.user_id = u.id
+JOIN movie_schedules ms ON ms.id = b.schedule_id
+JOIN movies m ON m.id = ms.movie_id
+JOIN theaters t ON t.id = ms.theater_id
+JOIN booking_seats bs ON bs.booking_id = b.id
+JOIN seats s ON s.id = bs.seat_id 
+WHERE b.id = ?
+GROUP BY b.id;
+`
+
 export const getMovies = async (
     req: Request,
     res: Response,
@@ -341,6 +362,18 @@ export const updateBookingsStatus = async (bookingId: string) => {
     }
 }
 
+
+export const getBookingDetails = async(
+    bookingId: string
+) => {
+    try {
+        const bookingDetails = await executeQuery(_getBookingDetails(), [bookingId])
+        return bookingDetails
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 module.exports = {
     getMovies,
     getMovieByID,
@@ -349,6 +382,7 @@ module.exports = {
     getSeats,
     getBookedSeats,
     bookSeats,
-    updateBookingsStatus
+    updateBookingsStatus,
+    getBookingDetails
 }
 

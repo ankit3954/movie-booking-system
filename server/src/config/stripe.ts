@@ -1,5 +1,6 @@
 import dotenv from "dotenv"
 import { updateBookingsStatus } from "../controllers/movies.controller"
+import { handlePaymentSuccess } from "../controllers/payment.controller"
 
 dotenv.config()
 
@@ -48,6 +49,8 @@ export const stripeWebhook = (body: any, sig: string) => {
         //updating booking status in db after confirming payment using webhook
         if(bookingId){
             updateBookingsStatus(bookingId)
+            // sendBookingConfirmationMail(bookingId)
+            handlePaymentSuccess(bookingId)
         }
     }
 

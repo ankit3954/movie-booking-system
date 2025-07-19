@@ -2,6 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { createStripeCheckoutSession, stripeWebhook } from "../config/stripe";
 import { sendResponse } from "../utils/responseHandler";
 import { executeQuery } from "../config/db";
+import { getBookingDetails } from "./movies.controller";
+import { generateTicketPDF } from "../email/generateTicket";
+import { sendBookingConfirmationEmail } from "../email/sendEmail";
 
 const _getBookingStatus = () => `
     select
@@ -64,8 +67,26 @@ export const getBookingStatus = async (
 }
 
 
+export const handlePaymentSuccess = async(bookingId: string) => {
+    try {
+        const results = await getBookingDetails(bookingId);
+        const booking = results[0]
+        if(!booking){
+            console.error("Booking Details not found")
+            return
+        }
+
+        const pdfPath = await generateTicketPDF(booking);
+        await sendBookingConfirmationEmail(booking.userEmail, booking, pdfPath);
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+
 module.exports = {
     createCheckoutSession,
     handleStripeWebhook,
-    getBookingStatus
+    getBookingStatus,
+    handlePaymentSuccess
 }
