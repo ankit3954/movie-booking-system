@@ -35,6 +35,9 @@ export const generateTicketPDF = (
     doc.fontSize(14).text(`Booking ID: ${booking.bookingId}`);
     doc.text(`User: ${booking.userName}`);
     doc.text(`Movie: ${booking.movieName}`);
+    doc.text(`Theater: ${booking.theaterName}`);
+    doc.text(`Date: ${booking.showTime}`);
+    doc.text(`Start Time: ${booking.startTime}`);
     doc.text(`Seats: ${booking.seats.join(', ')}`);
     doc.moveDown();
     doc.text('✅ Enjoy your movie!', { align: 'center' });

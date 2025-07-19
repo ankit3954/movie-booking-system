@@ -58,3 +58,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # JWT constants
  /src/modules/auth/jwt.constants.ts
+
+
+/tickets/
